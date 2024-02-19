@@ -1,4 +1,4 @@
-#EDA of datasets and covariates
+#EDA of datasets and covariates for apartments for rent classified
 
 library(tidyverse)
 library(readxl)
@@ -39,6 +39,6 @@ rent_pricing_model = lm(price~.-state,data=apartments_100k_cleaned)
 
 summary(rent_pricing_model)
 
-#analyzing correlations
+#analyzing correlations 
 variable_correlations <- cor(apartments_100k_cleaned[,-4])
 
