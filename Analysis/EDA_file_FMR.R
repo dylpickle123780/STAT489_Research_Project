@@ -61,3 +61,9 @@ ggplot(aes(),data=US_sh_file[-c(19,29,35,48,53,54,55),]) + #subtractions of geom
   geom_point(aes(x=long,y=lat,color=erap_fmr_br4),data = fmr_2024_cleaned2)+
   scale_color_gradientn(colours = terrain.colors(10))
 
+#Linear Model Analysis
+fmr_lm_model <- lm(fmr_2024_cleaned2$zipcode~., data = fmr_2024_cleaned2)
+summary(fmr_lm_model)
+
+#Correlations
+variable_correlations <- cor (fmr_2024_cleaned2)
