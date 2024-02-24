@@ -21,7 +21,7 @@ apartments_100k_cleaned <- apartments_100k %>%
   mutate(price = as.numeric(price), latitude = as.numeric(latitude), longitude = as.numeric(longitude),
          state = as.factor(state), bathrooms = as.numeric(bathrooms), bedrooms = as.numeric(bedrooms),
          square_feet = as.numeric(square_feet)) %>% 
-  filter(price<5000)
+  filter(price<10000)
 
 #reading in US shapefile to underlay the data
 US_sh_file = read_sf("./Data/Country_Shape_file/cb_2022_us_state_500k.shx")
@@ -41,4 +41,8 @@ summary(rent_pricing_model)
 
 #analyzing correlations 
 variable_correlations <- cor(apartments_100k_cleaned[,-4])
+
+#save cleaned file for using in analysis
+save(apartments_100k_cleaned,file = "Data/Cleaned_100k_data.Rdata")
+
 
