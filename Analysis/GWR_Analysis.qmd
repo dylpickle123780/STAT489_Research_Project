@@ -1,0 +1,41 @@
+
+Running the basic GWR model
+```{r}
+#Load
+library(GWmodel)
+load("../Data/100k_shape_data.Rdata")
+
+#Turning to spatial
+model_data = joined_data %>% 
+  as_Spatial()
+
+#Selecting Bandwidth
+model_bandwidth = bw.gwr(model_data$price ~ ., data = model_data,
+                         kernel = "exponential", parallel.method = "omp")
+
+#run model with calculated bandwidth and return model
+model_gwr = gwr.basic(model_data$price ~ ., data = model_data,
+                      bw = model_bandwidth, kernel = "exponential", 
+                      parallel.method = "omp")
+
+```
+
+```{r}
+#Source in functions for plotting
+source("../Functions/GWR_implementation.R")
+
+plotting_GWR_predicted(model_gwr)
+
+```
+Model does a good job of highlighting the large increase in price in coastal areas such as California, Florida, and New York.
+
+```{r}
+plotting_GWR_residuals(model_gwr)
+
+```
+Most areas seem to be predicting rent price fairly decently but some areas that are inland of the coastal counties seem to be affected by them. A population variable would likely help solve this problem and will be implemented next.
+
+```{r}
+plotting_GWR_bedrooms(model_gwr)
+```
+A lot of the Betas for bedrooms seem to be negative. This is a problem as the variable should be positive given an apartment with more bedrooms should increase the price. This could be due to not having enough variables in the model. Also there is only data for 986 counties. I do not know if the solution for this is finding more data or trying to continue as is, but the model is likely suffering in certain counties from not having data from enough neighbors to make an accurate prediction.
