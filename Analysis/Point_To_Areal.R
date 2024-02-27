@@ -1,4 +1,8 @@
 #Transforming data into areal data
+library(tidyverse)
+library(sf)
+library(sp)
+library(ggfortify)
 load("./Data/Cleaned_100k_data.Rdata")
 
 #Transforming into coordinates

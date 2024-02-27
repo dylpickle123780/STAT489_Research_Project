@@ -37,9 +37,9 @@ plotting_GWR_bedrooms = function(model){
   model_results = model$SDF %>% as("sf")
   
   model_results %>% 
-    mutate("Model variable" = Bedrooms) %>%
+    mutate("Model variable" = bedrooms) %>%
     ggplot() +
-    geom_sf(aes(fill = `Bedrooms`),
+    geom_sf(aes(fill = `bedrooms`),
             color = scales::alpha("black",
                                   alpha = 0.1)) +
     scale_fill_viridis_c(limits = c(-2000, 600),
