@@ -1,0 +1,23 @@
+Creation of the Car Model 
+# Path: CAR_implementation.qmd
+```{r}
+#Access the Car Implementation
+load("../Data/100k_shape_data.Rdata")
+source("../Functions/CAR_implementation.R")
+car_model = suppressWarnings(CAR_model_creation_from_data(joined_data))
+suppressWarnings(summary(car_model))
+```
+
+Plotting the CAR Model onto the US
+```{r}
+plot_CAR_model_onto_US(car_model)
+```
+The model does a good job at simulating the price of apartments for rent across the US, and captures residential hot-spots such as New York City, Los Angeles, and San Francisco, however it is missing data for a lot of under populated counties within the United States. 
+
+Plotting the Residuals of the CAR Model onto the US
+```{r}
+plot_CAR_resids_onto_US(car_model)
+```
+The model struggles to capture data on the peripheries of the major US cities listed above probably because there is a stark contrast between the city prices and it's surrounding suburbs which is causing error in the model. I think a model that is even more precise with location can capture this transition from the city to the suburb. 
+
+In a comparison with the GWR Model I think the CAR model is less precise in capturing the price of apartments for rent across the US. The GWR model is able to capture the transition from the city to the suburb more accurately because the connections between the counties are more sporatic due to the missing data. 
