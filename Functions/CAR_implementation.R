@@ -9,7 +9,6 @@ CAR_model_creation_from_data = function(data){
   CAR_model = spautolm(price ~ bedrooms + bathrooms + square_feet, data = data, listw = W, family = "CAR")
   return(CAR_model)
 }
-model = CAR_model_creation_from_data(joined_data)
 
 
 #Plot model onto the US has issues with entire country
@@ -24,7 +23,7 @@ plot_CAR_model_onto_US = function(model){
           legend.position = "bottom") +
     labs(title = "Predicted Values for Price by CAR Model", fill = "Predicted Price")
 }
-plot_CAR_model_onto_US(model)
+
 
 #Plot residuals onto the US has issues with the entire country
 plot_CAR_resids_onto_US = function(model){
@@ -61,4 +60,3 @@ plot_CAR_SQFT_onto_US = function(data){
 }
 #bugged due to non symetrical weights
 
-plot_CAR_SQFT_onto_US(joined_data)

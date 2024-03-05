@@ -3,6 +3,10 @@ Running the basic GWR model
 ```{r}
 #Load
 library(GWmodel)
+library(tidyverse)
+library(sf)
+library(sp)
+library(ggfortify)
 load("../Data/100k_shape_data.Rdata")
 
 #Turning to spatial
