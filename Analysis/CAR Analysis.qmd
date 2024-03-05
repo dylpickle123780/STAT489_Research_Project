@@ -1,10 +1,12 @@
 Creation of the Car Model 
-# Path: CAR_implementation.qmd
+# Path: CAR_implementation.R
 ```{r}
 #Access the Car Implementation
 load("../Data/100k_shape_data.Rdata")
 source("../Functions/CAR_implementation.R")
-car_model = suppressWarnings(CAR_model_creation_from_data(joined_data))
+data = joined_data
+W = poly2nb(data$geometry) %>% nb2listw(style = "W", zero.policy = TRUE)
+car_model = spautolm(price ~ bedrooms + bathrooms + square_feet, data = data, listw = W, family = "CAR")
 suppressWarnings(summary(car_model))
 ```
 

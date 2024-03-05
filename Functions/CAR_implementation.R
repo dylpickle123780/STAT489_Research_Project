@@ -1,4 +1,4 @@
-library(spatialreg); library(spdep); library(igraph); library(ggplot2); library(tidyverse); library(dplyr)
+library(spatialreg); library(spdep); library(igraph); library(ggplot2); library(dplyr)
 library(sf)
 
 CAR_model_creation_from_data = function(data){
@@ -6,8 +6,7 @@ CAR_model_creation_from_data = function(data){
   W = poly2nb(data$geometry) %>% nb2listw(style = "W", zero.policy = TRUE)
   
   #create CAR model
-  CAR_model = spautolm(price ~ bedrooms + bathrooms + square_feet, data = data, listw = W, family = "CAR")#, method = "SparseM", interval = 'optimize')
-  
+  CAR_model = spautolm(price ~ bedrooms + bathrooms + square_feet, data = data, listw = W, family = "CAR")
   return(CAR_model)
 }
 model = CAR_model_creation_from_data(joined_data)
