@@ -73,7 +73,7 @@ Fitting the full dataset to get residual and fitted plots
 #run rf with full dataset
 full_random_f_model = run_rf_model(random_f_data, rfGrid)
 
-full_model_predictions = rf_prediction(random_f_model, random_f_data)
+full_model_predictions = rf_prediction(full_random_f_model, random_f_data)
 
 #add predictions to dataset
 joined_data$predictions = full_model_predictions

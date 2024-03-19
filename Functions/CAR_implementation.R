@@ -39,9 +39,6 @@ plot_CAR_resids_onto_US = function(model){
 }
 
 
-
-
-
 #Plot SQFT onto the US has issues with the entire country
 plot_CAR_SQFT_onto_US = function(data){
   W = poly2nb(data$geometry) %>% nb2listw(style = "W", zero.policy = TRUE)
