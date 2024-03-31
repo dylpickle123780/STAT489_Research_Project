@@ -74,7 +74,7 @@ fmr_2024_county = read_xlsx("./Data/FMR2024_final_revised.xlsx")
 
 #cleaning dataset
 fmr_2024_county_reduced = fmr_2024_county %>% 
-  select(county_code, state_code, base_rent)
+  select(county_code, state_code, base_rent, rm_factor, brr_final_0, brr_final_1, brr_final_3, brr_final_4)
 
 
 US_sh_file = st_read("./Data/cb_2022_us_county_5m/cb_2022_us_county_5m.shx")
@@ -92,4 +92,4 @@ ggplot(aes(),data=new_file) + #subtractions of geometry include territories and 
   geom_sf(aes(fill = base_rent))+
   scale_fill_gradientn(colours = terrain.colors(8))
 
-save(new_file,file = "Data/FMR_shape_data.Rdata")
+save(fmr_data,file = "Data/FMR_shape_data.Rdata")
