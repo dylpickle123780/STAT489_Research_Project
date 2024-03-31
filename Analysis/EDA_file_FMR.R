@@ -4,7 +4,6 @@ library(readxl)
 library(sf)
 library(ggfortify)
 library(zipcodeR)
-library(ggplot2)
 
 #import revised dataset
 fmr_2024 = read_xlsx("./Data/fy2024_erap_fmrs_revised.xlsx")
@@ -67,3 +66,28 @@ summary(fmr_lm_model)
 
 #Correlations
 variable_correlations <- cor (fmr_2024_cleaned2)
+
+
+
+#import dataset
+fmr_2024_county = read_xlsx("./Data/FMR2024_final_revised.xlsx")
+
+#cleaning dataset
+fmr_2024_county = fmr_2024_county %>% 
+  select(county_code,)
+
+
+US_sh_file = st_read("./Data/cb_2022_us_county_5m/cb_2022_us_county_5m.shx")
+
+#Remove Alaska Hawaii and territories
+US_sh_file = US_sh_file %>% 
+  filter(STUSPS!="AK",STUSPS!="HI",STUSPS!="PR",STUSPS!="VI",STUSPS!="GU",
+         STUSPS!="AS",STUSPS!="MP") %>% 
+  st_transform(4326)
+
+new_file = right_join(US_sh_file, fmr_2024_county, 
+                      by = c("COUNTYFP" = "county_code", 
+                              "STATEFP" = "state_code" ))
+ggplot(aes(),data=new_file) + #subtractions of geometry include territories and AK HI
+  geom_sf(aes(fill = base_rent))+
+  scale_fill_gradientn(colours = terrain.colors(8))
