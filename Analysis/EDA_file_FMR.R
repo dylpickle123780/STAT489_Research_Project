@@ -85,10 +85,10 @@ US_sh_file = US_sh_file %>%
          STUSPS!="AS",STUSPS!="MP") %>% 
   st_transform(4326)
 
-new_file = right_join(US_sh_file, fmr_2024_county_reduced, 
+fmr_data = right_join(US_sh_file, fmr_2024_county_reduced, 
                       by = c("COUNTYFP" = "county_code", 
                               "STATEFP" = "state_code" ))
-ggplot(aes(),data=new_file) + #subtractions of geometry include territories and AK HI
+ggplot(aes(),data=fmr_data) + #subtractions of geometry include territories and AK HI
   geom_sf(aes(fill = base_rent))+
   scale_fill_gradientn(colours = terrain.colors(8))
 
