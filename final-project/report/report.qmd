@@ -8,7 +8,7 @@ format:
     runninghead: "A Preprint"
   arxiv-html: default
 author:
-  - name: Michael J Mahoney
+  - name: Dylan Michaels
     affiliations:
       - name: State University of New York College of Environmental Science and Forestry
         department: Graduate Program in Environmental Science
@@ -19,7 +19,7 @@ author:
     orcid: 0000-0003-2402-304X
     email: fake_email@fakeyfake.com
     url: https://mm218.dev
-  - name: Someone Else
+  - name: Shouro Shuvit
     affiliations:
       - name: State University of New York College of Environmental Science and Forestry
         department: Department of Sustainable Resources Management
@@ -40,6 +40,15 @@ bibliography: bibliography.bib
 This is an example of how to use this template to render journal articles. This template is inspired by the arXiv rticles template for rmarkdown, repurposed for the Quarto publishing system.
 
 This quarto extension format supports PDF and HTML outputs. This template is primarily focused on generating acceptable {{< latex >}} outputs from Quarto, but renders an acceptable HTML output using the standard Quarto options.
+
+# Methods
+The dataset on rent prices was obtained from the UCI machine learning repository and contained roughly 52,000 observations after removing observations that were incomplete or were outside the contiguous United States. This was then aggregated into county level data which left data on 986 counties across the United States. To aggregate, the mean response of each covariate for all the observations in that county was used. From *figure showing responses* it is apparent that there are spatial effects in this data. 
+
+To model this spatial effect, geographically weighted regression (GWR) was used. GWR assumes that the covariates are changing with space and each observation is influenced by the observations closest around it. To do this a regression model is fit for each individual observation using a weight matrix that is a function of the distance between observations. 
+
+This fits our needs as the rent pricing is varying with space and it can be seen that counties near to each other are closer in price than those farther out. 
+
+
 
 # Quarto
 
