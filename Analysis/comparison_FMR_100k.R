@@ -1,6 +1,5 @@
 library(sf)
 library(ggplot2)
-library(zoo)
 library(tidyverse)
 
 load("./Data/100k_shape_data.Rdata")
