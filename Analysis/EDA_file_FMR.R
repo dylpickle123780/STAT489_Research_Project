@@ -70,11 +70,10 @@ variable_correlations <- cor (fmr_2024_cleaned2)
 
 
 #import dataset
-fmr_2024_county = read_xlsx("./Data/FMR2024_final_revised.xlsx")
+fmr_2019_county = read_xlsx("./Data/FY2019_4050_FMRs_rev2.xlsx")
 
-#cleaning dataset
-fmr_2024_county_reduced = fmr_2024_county %>% 
-  select(county_code, state_code, base_rent, rm_factor, brr_final_0, brr_final_1, brr_final_3, brr_final_4)
+fmr_2019_county_reduced = fmr_2019_county %>% 
+  select(countyname, state_alpha, fmr_0, fmr_1, fmr_2, fmr_3, fmr_4)
 
 
 US_sh_file = st_read("./Data/cb_2022_us_county_5m/cb_2022_us_county_5m.shx")
@@ -85,11 +84,19 @@ US_sh_file = US_sh_file %>%
          STUSPS!="AS",STUSPS!="MP") %>% 
   st_transform(4326)
 
-fmr_data = right_join(US_sh_file, fmr_2024_county_reduced, 
-                      by = c("COUNTYFP" = "county_code", 
-                              "STATEFP" = "state_code" ))
+fmr_data = right_join(US_sh_file, fmr_2019_county_reduced, 
+                           by = c("NAMELSAD" = "countyname", 
+                                  "STUSPS" = "state_alpha" ))
 ggplot(aes(),data=fmr_data) + #subtractions of geometry include territories and AK HI
-  geom_sf(aes(fill = base_rent))+
+  geom_sf(aes(fill = fmr_0))+
   scale_fill_gradientn(colours = terrain.colors(8))
 
 save(fmr_data,file = "Data/FMR_shape_data.Rdata")
+
+
+
+
+
+
+
+
