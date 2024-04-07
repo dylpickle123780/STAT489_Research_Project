@@ -25,6 +25,7 @@ random_f_data = total_data %>%
   mutate(geometry = st_centroid(geometry)) %>% 
   mutate(longitude = st_coordinates(geometry)[,1], 
          latitude = st_coordinates(geometry)[,2]) %>% 
+  select(-price:-price_delt) %>% 
   st_drop_geometry()
 
 
@@ -86,4 +87,40 @@ stopCluster(compute_cluster)
 ```{r}
 #plotting fitted values
 plotting_rf_predicted(total_data)
+```
+
+```{r}
+library(tigris)
+county_sh = states()
+county_sh = county_sh %>% 
+  filter(STATEFP!="15",STATEFP!="02",STATEFP!="78",STATEFP!="72",
+         STATEFP!="69",STATEFP!="60",STATEFP!="66") %>% 
+  select(geometry)
+
+#make polygons 
+US_covering_polys = st_make_grid(county_sh, n = c(80, 80)) %>% 
+  st_intersection(county_sh) %>% 
+  st_sf()
+
+#fill with median
+filled_random_f_data = US_covering_polys %>% 
+  mutate(geometry = st_centroid(geometry)) %>% 
+  mutate(longitude = st_coordinates(geometry)[,1], 
+         latitude = st_coordinates(geometry)[,2]) %>% 
+  st_drop_geometry() %>% 
+  mutate(
+    Count = median(total_data$Count),
+    bedrooms = median(total_data$bedrooms),
+    bathrooms = median(total_data$bathrooms),
+    square_feet = median(total_data$square_feet)
+  )
+
+filled_predictions = rf_prediction(full_random_f_model, filled_random_f_data)
+
+US_covering_polys = US_covering_polys %>% 
+  mutate(predictions = filled_predictions)
+
+ggplot(US_covering_polys) +
+  geom_sf(aes(fill = predictions))+
+  scale_fill_gradientn(colours = terrain.colors(8))
 ```

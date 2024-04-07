@@ -30,7 +30,6 @@ rf_prediction = function(model, test_data){
   
   rf_sacr_pred = test_data %>%
     st_drop_geometry() %>%
-    select(!price_delt_adj) %>%
     predict(model, .)
   return(rf_sacr_pred)
 }
