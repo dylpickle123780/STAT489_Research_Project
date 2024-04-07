@@ -39,7 +39,7 @@ apartment_train = random_f_data[rf_split,]
 apartment_test = random_f_data[-rf_split,]
 
 # Set up parallel training
-compute_cluster = makeCluster(6)
+compute_cluster = makeCluster(10)
 registerDoParallel(compute_cluster)
 ```
 
@@ -62,9 +62,9 @@ random_f_model = run_rf_model(apartment_train, rfGrid)
 model_predictions = rf_prediction(random_f_model, apartment_test)
 
 
-root_mean = RMSE(model_predictions, apartment_test$price)
-mean_absolute = MAE(model_predictions, apartment_test$price)
-mean_squared = mean((model_predictions - apartment_test$price)^2)
+root_mean = RMSE(model_predictions, apartment_test$price_delt_adj)
+mean_absolute = MAE(model_predictions, apartment_test$price_delt_adj)
+mean_squared = mean((model_predictions - apartment_test$price_delt_adj)^2)
 
 comparison_metrics = c(root_mean, mean_absolute, mean_squared)
 

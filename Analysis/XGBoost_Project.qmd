@@ -41,7 +41,7 @@ data_test = as.data.frame(data[-data_split,])
 
 ```{r}
 source("../Functions/XGBoost_implementation.R")
-compute_cluster = makeCluster(8)
+compute_cluster = makeCluster(10)
 registerDoParallel(compute_cluster)
 xgbGrid = expand.grid(
   nrounds = c(100, 500),
@@ -66,4 +66,19 @@ mean_squared = mean((xgb_sacr_pred - data_test$price_delt_adj)^2)
 comparison_metrics = c(root_mean, mean_absolute, mean_squared)
 
 stopCluster(compute_cluster)
+```
+
+```{r}
+compute_cluster = makeCluster(10)
+registerDoParallel(compute_cluster)
+full_xgb_model = run_XGB_model(data = data, xgbGrid = xgbGrid)
+
+full_xgb_pred = xgb_prediction(model = full_xgb_model, test_data = data)
+total_data$predictions = full_xgb_pred
+
+stopCluster(compute_cluster)
+```
+
+```{r}
+plotting_xgb_predicted(total_data, full_xgb_pred)
 ```

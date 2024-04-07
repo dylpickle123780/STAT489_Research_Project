@@ -17,8 +17,8 @@ run_XGB_model = function(data, xgbGrid, folds = 5, ...){
     
     xgboost_train = train(
       x = data_train %>% 
-        select(!price),   
-      y = data_train$price,
+        select(!price_delt_adj),   
+      y = data_train$price_delt_adj,
       trControl = data_ctrl,
       tuneGrid = xgbGrid,
       method = "xgbTree",
@@ -31,7 +31,7 @@ run_XGB_model = function(data, xgbGrid, folds = 5, ...){
 
 xgb_prediction = function(model, test_data){
   xgb_sacr_pred = test_data %>% 
-    select(!price) %>% 
+    select(!price_delt_adj) %>% 
     predict(model, .)
   return(xgb_sacr_pred)
 }
@@ -55,7 +55,7 @@ plotting_xgb_predicted = function(data_xgb, predictions){
 plotting_xgb_resids = function(data_xgb, predictions){
   #turning to plotable data
   data_xgb %>% 
-    mutate("Predicted Price" = abs(predictions-price)) %>%
+    mutate("Predicted Price" = abs(predictions-price_delt_adj)) %>%
     ggplot() +
     geom_sf(aes(fill = `Predicted Price`),
             color = scales::alpha("black",

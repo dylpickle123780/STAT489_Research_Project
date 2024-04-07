@@ -14,9 +14,9 @@ run_rf_model = function(data, rfGrid, folds = 5, ...){
   
   rf_train = train(
     x = (data %>% 
-           select(-price) %>%
+           select(-price_delt_adj) %>%
            st_drop_geometry()),
-    y = data$price,
+    y = data$price_delt_adj,
     trControl = rf_ctrl,
     tuneGrid = rfGrid,
     method = "rf"
@@ -30,7 +30,7 @@ rf_prediction = function(model, test_data){
   
   rf_sacr_pred = test_data %>%
     st_drop_geometry() %>%
-    select(!price) %>%
+    select(!price_delt_adj) %>%
     predict(model, .)
   return(rf_sacr_pred)
 }
@@ -54,7 +54,7 @@ plotting_rf_predicted = function(data_rf){
 plotting_rf_residuals = function(data_rf) {
   
   data_rf %>% 
-    mutate("Price Abs Err" = abs(predictions - price)) %>%
+    mutate("Price Abs Err" = abs(predictions - price_delt_adj)) %>%
     ggplot() +
     geom_sf(aes(fill = `Price Abs Err`),
             color = scales::alpha("black",
