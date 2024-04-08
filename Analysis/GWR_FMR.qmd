@@ -1,0 +1,41 @@
+---
+title: "GWR_FMR"
+format: pdf
+editor: visual
+---
+
+## GWR of FMR
+
+```{r}
+#Load
+library(GWmodel)
+library(tidyverse)
+library(sf)
+library(sp)
+library(ggfortify)
+load("../Data/FMR_shape_data.Rdata")
+
+#Turning to spatial
+model_data = fmr_data %>% 
+  as_Spatial()
+
+#Selecting Bandwidth
+model_bandwidth = bw.gwr(model_data$logFMR_2 ~ ., data = model_data,
+                         kernel = "exponential", parallel.method = "omp")
+
+#run model with calculated bandwidth and return model
+model_gwr = gwr.basic(model_data$logFMR_2 ~ ., data = model_data,
+                      bw = model_bandwidth, kernel = "exponential", 
+                      parallel.method = "omp")
+```
+
+You can add options to executable code like this
+
+```{r}
+#Source in functions for plotting
+source("../Functions/GWR_implementation.R")
+
+plotting_GWR_predicted(model_gwr)
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).

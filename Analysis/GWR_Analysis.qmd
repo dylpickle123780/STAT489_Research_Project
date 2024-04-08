@@ -7,7 +7,7 @@ library(tidyverse)
 library(sf)
 library(sp)
 library(ggfortify)
-load("../Data/100k_shape_data.Rdata")
+load("../Data/FMR_shape_data.Rdata")
 
 #Turning to spatial
 model_data = joined_data %>% 

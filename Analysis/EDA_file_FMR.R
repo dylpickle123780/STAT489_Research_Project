@@ -91,6 +91,17 @@ ggplot(aes(),data=fmr_data) + #subtractions of geometry include territories and 
   geom_sf(aes(fill = fmr_0))+
   scale_fill_gradientn(colours = terrain.colors(8))
 
+fmr_data$fmr_0 <- log(fmr_data$fmr_0)
+fmr_data$fmr_1 <- log(fmr_data$fmr_1)
+fmr_data$fmr_2 <- log(fmr_data$fmr_2)
+fmr_data$fmr_3 <- log(fmr_data$fmr_3)
+fmr_data$fmr_4 <- log(fmr_data$fmr_4)
+
+fmr_data <- fmr_data %>% 
+  rename(logFMR_0 = fmr_0, logFMR_1 = fmr_1, logFMR_2 = fmr_2, logFMR_3 = fmr_3, logFMR_4 = fmr_4)
+
+fmr_data <- fmr_data %>% filter(!is.na(GEOID))
+
 save(fmr_data,file = "Data/FMR_shape_data.Rdata")
 
 
