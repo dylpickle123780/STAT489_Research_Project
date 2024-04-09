@@ -1,5 +1,5 @@
 ---
-title: "Demo arXiv template"
+title: "Fair Market Rent Difference: A Pattern Analysis of Unfair Housing Prices"
 format:
   arxiv-pdf:
     keep-tex: true  
@@ -27,7 +27,8 @@ author:
         postal-code: 77843
     email: shouroshuvit@tamu.edu
 abstract: |
-  This document is only a demo explaining how to use the template.
+  The fair market rent (FMR) system in the United States is used by the Department of Housing to ascertain what housing should cost in any given county based on economic factors, however reality often does not reflect this estimate as other factors push the cost of housing higher. Fair Market Rent Difference is an analysis technique that leverages Random Forests in order to find where in the United States there is a large difference between the FMR and the actual market rent. With Random Forests, we are able to accurately create a predictive field that shows these disparities and what areas they are formed in. The analysis will allow for a broad overlook of how housing unaffordability fluctuates with respect to space when it is compared to a price point that is based on the economic data of the county. This analysis can be a baseline for future research into market conditions that drive regions of the US to have tighter housing demands than expected by the government to then enact policy for housing affordability in unsuspecting places.
+
 keywords: 
   - template
   - demo
@@ -52,6 +53,11 @@ This fits our needs as the rent pricing is varying with space and it can be seen
 # Results
 
 # Discussion
+Since we don’t have real results to talk about right now we can go over a brief overview of the EDA such as the coast being more unaffordable than the rest of the nation 
+Discuss modeling efficiency 
+How these disparities can be used to provide better policy
+
+
 
 # Citations
 
