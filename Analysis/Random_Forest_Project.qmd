@@ -6,6 +6,8 @@ editor: visual
 
 ## RF on Total Data
 
+Below is the set up for the Random Forest where we used centroid geometry to establish the dataset. Wethen split the data by the price adjusted delta which is an old metric that we used that is the difference from the mean difference of the FMR and Apartment data. Then, created a partition between the training and testing data for an 4:1 split. Finally for the set up, we created the compute cluster (10 logical processors in my case) to start the training block.
+
 ```{r}
 #Load
 library(tidyverse)
@@ -43,8 +45,6 @@ apartment_test = random_f_data[-rf_split,]
 compute_cluster = makeCluster(10)
 registerDoParallel(compute_cluster)
 ```
-
-You can add options to executable code like this
 
 ```{r}
 

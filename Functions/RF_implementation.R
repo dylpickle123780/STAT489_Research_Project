@@ -14,9 +14,9 @@ run_rf_model = function(data, rfGrid, folds = 5, ...){
   
   rf_train = train(
     x = (data %>% 
-           select(-price_delt_adj) %>%
+           select(-logFMR_2) %>%
            st_drop_geometry()),
-    y = data$price_delt_adj,
+    y = data$logFMR_2,
     trControl = rf_ctrl,
     tuneGrid = rfGrid,
     method = "rf"
@@ -53,13 +53,13 @@ plotting_rf_predicted = function(data_rf){
 plotting_rf_residuals = function(data_rf) {
   
   data_rf %>% 
-    mutate("Price Abs Err" = abs(predictions - price_delt_adj)) %>%
+    mutate("Price Abs Err" = abs(predictions - logFMR_2)) %>%
     ggplot() +
     geom_sf(aes(fill = `Price Abs Err`),
             color = scales::alpha("black",
-                                  alpha = 0.1)) +
-    scale_fill_viridis_c(limits = c(0, 1000),
-                         breaks = c(250, 500, 750)) +
+                                  alpha = 0.001)) +
+    scale_fill_viridis_c(limits = c(0, 0.1),
+                         breaks = c(0.01, 0.05, 0.1)) +
     theme(text = element_text(size = 20), 
           legend.position = "bottom") +
     labs(title = "Absolute Prediction Error of Price by RF")
