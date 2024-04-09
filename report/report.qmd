@@ -54,15 +54,30 @@ A metric that compares the difference between market rent and Fair Market Rent c
 
 
 # Related Works
+Paper on Random forests (Breiman) overviewing method
+How random forests work in general and brief overview of the randomness factor that is associated with them
+
+Need for accounting for spatial structure (Fuss)
+Impact of space on housing in general 
+
+Paper on random forests and apartment rent (Yoshida)
+Explain how breiman’s method is especially useful for apartment data because of their large sample sizes
 
 # Methods
-The dataset on rent prices was obtained from the UCI machine learning repository and contained roughly 52,000 observations after removing observations that were incomplete or were outside the contiguous United States. This was then aggregated into county level data which left data on 986 counties across the United States. To aggregate, the mean response of each covariate for all the observations in that county was used. From *figure showing responses* it is apparent that there are spatial effects in this data. 
+Used UCI Machine learning apartment dataset (cite dataset). Most data points from 2018-2019 period. Only analyzed the contiguous United States and removed some observations that were missing data. This translated to removing ~40 observations out of 52,000 Did log transform of the prices due to the heavy skewness of pricing.  Used Department of Housing’s Fair market rent data from 2019 and also log transformed the pricing. Number of bedrooms, bathrooms and the square footage of an apartment are all key in determining rent pricing. 
 
-To model this spatial effect, geographically weighted regression (GWR) was used. GWR assumes that the covariates are changing with space and each observation is influenced by the observations closest around it. To do this a regression model is fit for each individual observation using a weight matrix that is a function of the distance between observations. 
+We use GWR as a comparison because we know rent is spatially varying (Fuss) and want a statistical model that can give us interpretable coefficients for our covariates. Through a plot of the prices it can be seen that counties near each other are similar in pricing.
 
-This fits our needs as the rent pricing is varying with space and it can be seen that counties near to each other are closer in price than those farther out. 
+We used XGboost and Random forests for their predictive power and their effectiveness in predicting rent pricing has been seen in (Yoshida). 
+
+Compared GWR, Random Forests, and XGboost on predicting and modeling out of sample observations.
 
 # Results
+Plots with our final predictive surface are coming in the next day or two. 
+
+Table showing that the out of sample error (MSE, RMSE, MAE) was similar across all 3 models.
+
+Choosing Random Forest due to its predictive power.
 
 # Discussion
 Since we don’t have real results to talk about right now we can go over a brief overview of the EDA such as the coast being more unaffordable than the rest of the nation 
