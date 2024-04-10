@@ -6,9 +6,14 @@ library(ggfortify)
 
 #import dataset
 fmr_2019_county = read_xlsx("./Data/FY2019_4050_FMRs_rev2.xlsx")
+fmr_2024_county = read_xlsx("./Data/FMR2024_final_revised.xlsx")
 
 fmr_2019_county_reduced = fmr_2019_county %>% 
-  select(countyname, state_alpha, fmr_0, fmr_1, fmr_2, fmr_3, fmr_4)
+  select(fips2010,countyname, state_alpha, fmr_0, fmr_1, fmr_2, fmr_3, fmr_4)
+
+fmr_2020_population = fmr_2024_county %>% select(fips2010, pop2020)
+
+fmr_2019_county_reduced = left_join(fmr_2019_county_reduced, fmr_2020_population, by = "fips2010")
 
 
 US_sh_file = st_read("./Data/cb_2022_us_county_5m/cb_2022_us_county_5m.shx")
@@ -36,7 +41,7 @@ fmr_data <- fmr_data %>%
   rename(logFMR_0 = fmr_0, logFMR_1 = fmr_1, logFMR_2 = fmr_2, logFMR_3 = fmr_3, logFMR_4 = fmr_4)
 
 fmr_data <- fmr_data %>% filter(!is.na(GEOID)) %>%
-  select(logFMR_0, logFMR_1, logFMR_2, logFMR_3, logFMR_4, NAMELSAD, STUSPS, geometry)
+  select(logFMR_0, logFMR_1, logFMR_2, logFMR_3, logFMR_4, pop2020,NAMELSAD, STUSPS, geometry)
 
 fmr0_data <- fmr_data %>% select(logFMR_0, NAMELSAD, STUSPS, geometry)
 fmr1_data <- fmr_data %>% select(logFMR_1, NAMELSAD, STUSPS, geometry)
