@@ -36,25 +36,20 @@ fmr_data$fmr_1 <- log(fmr_data$fmr_1)
 fmr_data$fmr_2 <- log(fmr_data$fmr_2)
 fmr_data$fmr_3 <- log(fmr_data$fmr_3)
 fmr_data$fmr_4 <- log(fmr_data$fmr_4)
+fmr_data$pop2020 <- log(fmr_data$pop2020+1)
 
 fmr_data <- fmr_data %>% 
-  rename(logFMR_0 = fmr_0, logFMR_1 = fmr_1, logFMR_2 = fmr_2, logFMR_3 = fmr_3, logFMR_4 = fmr_4)
+  rename(logFMR_0 = fmr_0, logFMR_1 = fmr_1, logFMR_2 = fmr_2, logFMR_3 = fmr_3, logFMR_4 = fmr_4, logPop2020 = pop2020)
 
-fmr_data <- fmr_data %>% filter(!is.na(GEOID)) %>%
-  select(logFMR_0, logFMR_1, logFMR_2, logFMR_3, logFMR_4, pop2020,NAMELSAD, STUSPS, geometry)
+hist(fmr_data$logPop2020)
 
-fmr0_data <- fmr_data %>% select(logFMR_0, NAMELSAD, STUSPS, geometry)
-fmr1_data <- fmr_data %>% select(logFMR_1, NAMELSAD, STUSPS, geometry)
-fmr2_data <- fmr_data %>% select(logFMR_2, NAMELSAD, STUSPS, geometry)
-fmr3_data <- fmr_data %>% select(logFMR_3, NAMELSAD, STUSPS, geometry)
-fmr4_data <- fmr_data %>% select(logFMR_4, NAMELSAD, STUSPS, geometry)
+fmr_data <- fmr_data %>% filter(!is.na(GEOID),!is.na(logPop2020)) %>%
+  select(logFMR_0, logFMR_1, logFMR_2, logFMR_3, logFMR_4, logPop2020,NAMELSAD, STUSPS, geometry)
+
+is.finite(fmr_data$logPop2020) %>% all()
 
 save(fmr_data,file = "Data/FMR_shape_data.Rdata")
-save(fmr0_data,file = "Data/FMR0_shape_data.Rdata")
-save(fmr1_data,file = "Data/FMR1_shape_data.Rdata")
-save(fmr2_data,file = "Data/FMR2_shape_data.Rdata")
-save(fmr3_data,file = "Data/FMR3_shape_data.Rdata")
-save(fmr4_data,file = "Data/FMR4_shape_data.Rdata")
+
 
 
 

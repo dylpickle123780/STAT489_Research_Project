@@ -23,17 +23,17 @@ load("../Data/FMR_shape_data.Rdata")
 
 #Turning to spatial
 fmr_data = fmr_data %>%
-  select(logFMR_0,logFMR_1,logFMR_2,logFMR_3,logFMR_4)
+  select(logFMR_0,logFMR_1,logFMR_2,logFMR_3,logFMR_4, pop2020)
 
 model_data = fmr_data %>%
   as_Spatial()
 
 #Selecting Bandwidth
-model_bandwidth = bw.gwr(model_data$logFMR_2 ~ ., data = model_data,
+model_bandwidth = bw.gwr(model_data$logFMR_2 ~ pop2020, data = model_data,
                          kernel = "exponential", parallel.method = "omp")
 
 #run model with calculated bandwidth and return model
-model_gwr = gwr.basic(model_data$logFMR_2 ~ ., data = model_data,
+model_gwr = gwr.basic(model_data$logFMR_2 ~ pop2020, data = model_data,
                       bw = model_bandwidth, kernel = "exponential", 
                       parallel.method = "omp")
 ```
