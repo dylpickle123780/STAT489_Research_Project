@@ -4,7 +4,7 @@ format: pdf
 editor: visual
 ---
 
-## GWR on Total Data
+## GWR for both datasets
 
 ```{r}
 #Load
@@ -13,30 +13,18 @@ library(tidyverse)
 library(sf)
 library(sp)
 library(ggfortify)
-load("../Data/Total_data.Rdata")
-
-
-point_model_data = apartments_100k_cleaned %>% 
-  select(-state) %>% 
-  select(bedrooms, bathrooms, square_feet, price, longitude, latitude) %>%
-  mutate(latitude = jitter(latitude), longitude = jitter(longitude)) %>% 
-  st_as_sf(coords = c("longitude","latitude")) %>% 
-  as_Spatial()
+load("../Data/100k_shape_data.Rdata")
   
 #Turning to spatial
-model_data = total_data %>% 
+model_data = joined_data %>% 
   select(Count, bedrooms, bathrooms, square_feet, price) %>% 
   mutate(price = log(price))%>% 
+  st_transform(4326) %>% 
   as_Spatial() 
 
 #Selecting Bandwidth
-model_bandwidth = bw.gwr(price ~ ., data = point_model_data,
+model_bandwidth = bw.gwr(price ~ ., data = model_data,
                          kernel = "exponential", parallel.method = "omp")
-
-#run model with calculated bandwidth and return model
-model_gwr = gwr.basic(price ~ ., data = model_data,
-                      bw = model_bandwidth, kernel = "exponential", 
-                      parallel.method = "omp", parallel.arg = 8)
 ```
 
 
@@ -45,7 +33,50 @@ model_gwr = gwr.basic(price ~ ., data = model_data,
 source("../Functions/GWR_implementation.R")
 library(tigris)
 
-test_data = counties() %>% 
+#Creating prediction data
+test_data = counties()%>% 
+  filter(STATEFP!="72",
+       STATEFP!="02",
+       STATEFP!="66",
+       STATEFP!="78",
+       STATEFP!="15",
+       STATEFP!="60",
+       STATEFP!="69")%>% 
+  select(geometry) %>% 
+  mutate(Count = mean(model_data$Count),
+         bedrooms = median(model_data$bedrooms),
+         bathrooms = median(model_data$bathrooms),
+         square_feet = mean(model_data$square_feet)) %>%
+  as_Spatial()
+
+#Run prediction model
+gwr_predictions = gwr.predict(model_data$price ~ ., model_data, test_data, 
+            model_bandwidth, kernel = "exponential")
+
+model_results = gwr_predictions$SDF %>% as("sf")
+
+ggplot(model_results)+
+  geom_sf(aes(fill = prediction))+
+  scale_fill_gradientn(colours = terrain.colors(8))
+
+```
+
+```{r}
+load("../Data/FMR_shape_data.Rdata")
+
+#Turning to spatial
+fmr_data = fmr_data %>%
+  select(-NAMELSAD:-STUSPS)
+
+model_data_fmr = fmr_data %>%
+  as_Spatial()
+
+#Selecting Bandwidth
+model_bandwidth_fmr = bw.gwr(model_data_fmr$logFMR_2 ~ ., data = model_data_fmr,
+                         kernel = "exponential", parallel.method = "omp")
+
+#Creating prediction data
+test_data_fmr = counties() %>% 
   filter(STATEFP!="72",
          STATEFP!="02",
          STATEFP!="66",
@@ -54,19 +85,28 @@ test_data = counties() %>%
          STATEFP!="60",
          STATEFP!="69")%>% 
   select(geometry) %>% 
-  mutate(square_feet = mean(model_data$square_feet),
-         bedrooms = median(model_data$bedrooms),
-         bathrooms = median(model_data$bathrooms),
-         Count = mean(model_data$Count)) %>%
+  mutate(logFMR_0 = mean(fmr_data$logFMR_0),
+         logFMR_1 = mean(fmr_data$logFMR_1),
+         logFMR_3 = mean(fmr_data$logFMR_3),
+         logFMR_4 = mean(fmr_data$logFMR_4),
+         logPop2020 = mean(fmr_data$logPop2020)) %>% 
   as_Spatial()
 
+#running prediction model
+gwr_predictions_fmr = gwr.predict(model_data_fmr$logFMR_2 ~ ., model_data_fmr,
+                                  test_data_fmr, model_bandwidth, 
+                                  kernel = "exponential")
 
-gwr_predictions = gwr.predict(model_data$price ~ ., model_data, test_data, 
-            model_bandwidth, kernel = "exponential")
+model_results_fmr = gwr_predictions_fmr$SDF %>% as("sf")
+```
 
-model_results = gwr_predictions$SDF %>% as("sf")
+```{r}
+model_results$diff = model_results$prediction-model_results_fmr$prediction
+
+model_results$re_scale_diff = exp(model_results$prediction) - exp(model_results_fmr$prediction)
+
 ggplot(model_results)+
-  geom_sf(aes(fill = prediction))+
-  scale_fill_gradientn(colours = terrain.colors(8))
+  geom_sf(aes(fill = re_scale_diff))+
+  scale_fill_viridis_c()
 ```
 
