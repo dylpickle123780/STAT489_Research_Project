@@ -14,6 +14,8 @@ library(sf)
 library(sp)
 library(ggfortify)
 library(ggpubr)
+library(covidcast)
+
 load("../Data/100k_shape_data.Rdata")
   
 #Turning to spatial
@@ -142,7 +144,7 @@ pl_5 = ggplot(model_results)+
   geom_sf(aes(fill = population_coef))+
   scale_fill_viridis_c(option = "magma")
   
-ggarrange(pl_1,pl_2,pl_3,pl_4,pl_5 nrow = 2)
+ggarrange(pl_1,pl_2,pl_3,pl_4,pl_5, nrow = 2)
 
 gwr.montecarlo(price ~ ., data = model_data, kernel = "exponential", 
                bw =  model_bandwidth)
@@ -155,7 +157,8 @@ model_diag_results = model_basic$SDF %>% as("sf") %>%
   mutate(bedrooms_TV = pt(abs(bedrooms_TV), 671),
          bathrooms_TV = pt(abs(bathrooms_TV), 671),
          Count_TV = pt(abs(Count_TV), 671),
-         square_feet_TV = pt(abs(square_feet_TV),671))
+         square_feet_TV = pt(abs(square_feet_TV),671),
+         population_TV = pt(abs(population_TV),671))
 
 plot_significance = function(data = model_diag_results, par){
   plot = ggplot(data)+
@@ -177,8 +180,8 @@ pl_square_feet = plot_significance(par = model_diag_results$square_feet_TV)
 pl_population = plot_significance(par = model_diag_results$population_TV)
 
 
-ggarrange(pl_bedrooms,pl_bathrooms,pl_Count,pl_square_feet, nrow = 2,
-          labels = c("Bedrooms","Bathrooms","Count","Square Feet"))
+ggarrange(pl_bedrooms,pl_bathrooms,pl_Count,pl_square_feet,pl_population,nrow = 2,
+          labels = c("Bedrooms","Bathrooms","Count","Square Feet","Population"))
 
 ```
 
