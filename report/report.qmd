@@ -78,9 +78,16 @@ Table showing that the out of sample error (MSE, RMSE, MAE) was similar across a
 Choosing Random Forest due to its predictive power.
 
 # Discussion
-Since we don’t have real results to talk about right now we can go over a brief overview of the EDA such as the coast being more unaffordable than the rest of the nation 
-Discuss modeling efficiency 
-How these disparities can be used to provide better policy
+We found that in (select locations and POIs later) probably going to be Denver, Dallas, and College Station. There is an unexpected difference between these urban areas and their surrounding counties. We theorize it is because of (discuss reason here). These policies and geographic constraints lead to the results we are seeing in these areas. 
+
+When we see why these results are occurring we can look to the covariates of Bedroom, Bathroom, and SQFT which come from the 100k Dataset to see what is causing these differences
+
+We also have to be considerate of our high p values which are unnaturally high because of the log transform. Once we transformed it back to raw prices the p values drop dramatically. 
+
+As expected though the urban coasts are far more unfair compared to the FMR data.
+
+We can use the metric to assess where in the US is deemed unfair. We can also see where funding can be reallocated from areas where the housing costs are lower than the FMR value 
+
 
 
 
