@@ -52,14 +52,19 @@ A metric that compares the difference between market rent and Fair Market Rent c
 
 
 # Related Works
-Paper on Random forests (Breiman) overviewing method
-How random forests work in general and brief overview of the randomness factor that is associated with them
+Paper on Random forests (Breiman) overviewing method and explaining what they can accomplish.
 
-Need for accounting for spatial structure (Fuss)
-Impact of space on housing in general 
+Possibly paper on XGBoost overviewing method
 
-Paper on random forests and apartment rent (Yoshida)
-Explain how breiman’s method is especially useful for apartment data because of their large sample sizes
+Paper on Geographically weighted regression (Brundson et al). Explain how GWR came about and what it addressed about other models. Transition into housing. 
+
+Showing a need for accounting for spatial structure (Fuss). Discuss main results showing this need. Transition into similar problems addressing spatial structures.
+
+Show Li using these methods to account for spatial structure on different problem (wind speed). Transition into modeling rent pricing.
+
+Ezebilo paper modeling rent and discuss limitations of model applied in paper (not allowing covariates to vary spatially). Transition into accounting for covariates varying spatially.
+
+Discuss McCord et al, Yoshida and Seya papers. All doing very similar things with GWR and algorithmic models so go into depth discussing similarities and differences from our own datasets and domain problem. Show what results came from these and how our application is different (location and scale).
 
 # Methods
 We used a UCI Machine learning apartment dataset (UCI machine learning). Most data points from 2018-2019 period. Only analyzed the contiguous United States and removed some observations that were missing data. This translated to removing ~40 observations out of 52,000. From the histogram of price we decided to log transform the price to make it more normally distributed.
