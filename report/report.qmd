@@ -37,16 +37,14 @@ bibliography: bibliography.bib
 
 # Introduction {#sec-intro}
 
-Motivation
-Rent pricing and how unaffordability is a big problem
-The United States is infamous for its housing unaffordability crisis (insert source here) however with the government spending upwards of 216 Billion under the Department of Housing and Urban Development there has to be a way to solve this problem. 
+The United States is infamous for its housing unaffordability crisis with over half of American Renters unable to afford rent according to the Joint Center for Housing Studies at Harvard University however with the government allocating 72.6 Billion dollars to be spent in 2025 for the Department of Housing and Urban Development with an additional 185 billion dollars to be spent to solve the housing crisis over the next ten years, there has to be a way to allocate the funds to maximize people being able to afford their rent. 
 
-
-Domain
 We believe that the Fair Market Rent system (FMR) that the government is using can be improved upon to incorporate live housing stock data to make better inferences on where in the United States housing unaffordability is. 
 
-Discover
-Currently the Fair Market Rent system relies on a multitude of factors which mainly includes economic factors like household wealth and GDP per capita within counties to find a 40th percentile price for what can be affordable housing for 60% of the population within a certain area. This system will then allocate housing units at those determined prices to push down the price of rent in those markets or allow for vouchers to be used to live in those areas. The main issue that is found is that market rent can vary wildly from year to year for reasons other than the economic wellbeing of the community as told by (insert source). 
+Currently the Fair Market Rent system relies on a multitude of factors which mainly includes economic factors like household wealth and GDP per capita within counties to find a 40th percentile price for what can be affordable housing for 60% of the population within a certain area. This system will then allocate housing units at those determined prices to push down the price of rent in those markets or allow for vouchers to be used to live in those areas. The main issue that is found is that market rent can vary wildly from year to year for reasons other than the economic well being of the community (FMR paper). 
+
+With this research, we aim to bridge the gap between the the actual market rent and the FMR data provided by the government to portray an accurate picture of the real estate market and see what parts of the market are actually affordable 
+
 
 
 Thesis
