@@ -144,8 +144,13 @@ We also have to be considerate of our high p values which are unnaturally high b
 
 As expected though the urban coasts are far more unfair compared to the FMR data.
 
-We can use the metric to assess where in the US is deemed unfair. We can also see where funding can be reallocated from areas where the housing costs are lower than the FMR value 
+We can use the metric to assess where in the US is deemed unfair. We can also see where funding can be reallocated from areas where the housing costs are lower than the FMR value.
 
+Show a stat where places like NYC and LA are dealing with homelessness problems and our unaffordability statistic is showing that these places are the most unfair. 
+
+If people are housed they are less likely to do XYZ thing. 
+
+Show how urban housing has a disproportionate effect than investing in rural areas because their housing is fair anyways. However, it is important to note that there still needs to be rural funding because there are less economic opportunities in rural areas so they tend to have fairer housing options. 
 
 
 # Citations
