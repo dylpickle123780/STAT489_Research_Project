@@ -1,13 +1,3 @@
----
-title: "GWR_Project"
-format: pdf
-editor: visual
----
-
-## GWR for both datasets
-
-```{r}
-#Load
 library(GWmodel)
 library(tidyverse)
 library(sf)
@@ -15,9 +5,10 @@ library(sp)
 library(ggfortify)
 library(ggpubr)
 library(covidcast)
+library(tigris)
 
 load("../Data/100k_shape_data.Rdata")
-  
+
 #Turning to spatial
 model_data = joined_data %>% 
   mutate(price = log(price))%>% 
@@ -30,26 +21,22 @@ model_bandwidth = bw.gwr(price ~ ., data = model_data,
 
 model_basic = gwr.basic(price ~ ., data = model_data, kernel = "exponential",
                         bw = model_bandwidth, parallel.method = "omp")
-```
 
-```{r}
 #Source in functions for plotting
 source("../Functions/GWR_implementation.R")
-library(tigris)
 
-test = counties() %>% 
-  left_join(county_census, by = join_by(GEOID == FIPS))
+
 #Creating prediction data
 test_data = counties()%>% 
   filter(STATEFP!="72",
-       STATEFP!="02",
-       STATEFP!="66",
-       STATEFP!="78",
-       STATEFP!="15",
-       STATEFP!="60",
-       STATEFP!="69")%>% 
+         STATEFP!="02",
+         STATEFP!="66",
+         STATEFP!="78",
+         STATEFP!="15",
+         STATEFP!="60",
+         STATEFP!="69")%>% 
   left_join(county_census, by = join_by(GEOID == FIPS)) %>% 
-  select(geometry,POPESTIMATE2019) %>% 
+  select(geometry,POPESTIMATE2019)%>% 
   mutate(Count = mean(model_data$Count),
          bedrooms = median(model_data$bedrooms),
          bathrooms = median(model_data$bathrooms),
@@ -60,29 +47,22 @@ test_data = counties()%>%
 
 #Run prediction model
 gwr_predictions = gwr.predict(model_data$price ~ ., model_data, test_data, 
-            model_bandwidth, kernel = "exponential")
+                              model_bandwidth, kernel = "exponential")
 
 model_results = gwr_predictions$SDF %>% as("sf")
 
-ggplot(model_results)+
-  geom_sf(aes(fill = prediction))+
-  scale_fill_gradientn(colours = terrain.colors(8))
 
-```
-
-```{r}
 load("../Data/FMR_shape_data.Rdata")
 
 #Turning to spatial
-fmr_data = fmr_data %>%
-  select(-NAMELSAD:-STUSPS)
+fmr_data = fmr_data[,c(1:6,9)]
 
 model_data_fmr = fmr_data %>%
   as_Spatial()
 
 #Selecting Bandwidth
 model_bandwidth_fmr = bw.gwr(model_data_fmr$logFMR_2 ~ ., data = model_data_fmr,
-                         kernel = "exponential", parallel.method = "omp")
+                             kernel = "exponential", parallel.method = "omp")
 
 #Creating prediction data
 test_data_fmr = counties() %>% 
@@ -92,7 +72,7 @@ test_data_fmr = counties() %>%
          STATEFP!="78",
          STATEFP!="15",
          STATEFP!="60",
-         STATEFP!="69")%>% 
+         STATEFP!="69") %>% 
   select(geometry) %>% 
   mutate(logFMR_0 = mean(fmr_data$logFMR_0),
          logFMR_1 = mean(fmr_data$logFMR_1),
@@ -107,19 +87,11 @@ gwr_predictions_fmr = gwr.predict(model_data_fmr$logFMR_2 ~ ., model_data_fmr,
                                   kernel = "exponential")
 
 model_results_fmr = gwr_predictions_fmr$SDF %>% as("sf")
-```
 
-```{r}
 model_results$diff = model_results$prediction-model_results_fmr$prediction
 
 model_results$re_scale_diff = exp(model_results$prediction) - exp(model_results_fmr$prediction)
 
-ggplot(model_results)+
-  geom_sf(aes(fill = re_scale_diff))+
-  scale_fill_viridis_c()
-```
-
-```{r diagnostics}
 #Significance tests for nonstationarity 
 library(hexbin)
 
@@ -142,44 +114,34 @@ pl_4 = ggplot(model_results)+
 pl_5 = ggplot(model_results)+
   geom_sf(aes(fill = population_coef))+
   scale_fill_viridis_c(option = "magma")
-  
-ggarrange(pl_1,pl_2,pl_3,pl_4,pl_5, nrow = 2)
 
 gwr.montecarlo(price ~ ., data = model_data, kernel = "exponential", 
                bw =  model_bandwidth)
-```
 
-```{r plotting significant betas}
 print(model_basic)
 
 model_diag_results = model_basic$SDF %>% as("sf") %>% 
-  mutate(bedrooms_TV = pt(abs(bedrooms_TV), 671),
-         bathrooms_TV = pt(abs(bathrooms_TV), 671),
-         Count_TV = pt(abs(Count_TV), 671),
-         square_feet_TV = pt(abs(square_feet_TV),671),
-         population_TV = pt(abs(population_TV),671))
+  mutate(bedrooms_TV = 2*(1-pt(abs(bedrooms_TV), 671)),
+         bathrooms_TV = 2*(1-pt(abs(bathrooms_TV), 671)),
+         Count_TV = 2*(1-pt(abs(Count_TV), 671)),
+         square_feet_TV = 2*(1-pt(abs(square_feet_TV),671)),
+         population_TV = 2*(1-pt(abs(population_TV),671)))
 
 plot_significance = function(data = model_diag_results, par){
   plot = ggplot(data)+
-  geom_sf(aes(fill = ifelse(par > 0.95,
-                            ifelse(par > 0.99, 
-                                   ">0.99",">0.95"),"<0.95")))+
-  scale_fill_manual(name = "P-value",values = c("red","grey","black"))
+    geom_sf(aes(fill = ifelse(par > 0.95,
+                              ifelse(par > 0.99, 
+                                     ">0.99",">0.95"),"<0.95")))+
+    scale_fill_manual(name = "P-value",values = c("red","grey","black"))
   return(plot)
 }
 
 pl_bedrooms = plot_significance(par = model_diag_results$bedrooms_TV)
 
 pl_bathrooms = plot_significance(par = model_diag_results$bathrooms_TV)
-  
+
 pl_Count = plot_significance(par = model_diag_results$Count_TV)
-  
+
 pl_square_feet = plot_significance(par = model_diag_results$square_feet_TV)
 
 pl_population = plot_significance(par = model_diag_results$population_TV)
-
-
-ggarrange(pl_bedrooms,pl_bathrooms,pl_Count,pl_square_feet,pl_population,nrow = 2,
-          labels = c("Bedrooms","Bathrooms","Count","Square Feet","Population"))
-
-```

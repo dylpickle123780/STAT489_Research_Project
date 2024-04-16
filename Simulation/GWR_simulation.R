@@ -3,7 +3,6 @@ library(ggplot2)
 library(sf)
 library(sp)
 library(tidyverse)
-library(raster)
 
 # Create a square boundary
 square_bound = matrix(c(0,0,1,0,1,1,0,1,0,0),
