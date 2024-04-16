@@ -62,13 +62,41 @@ Paper on random forests and apartment rent (Yoshida)
 Explain how breiman’s method is especially useful for apartment data because of their large sample sizes
 
 # Methods
-Used UCI Machine learning apartment dataset (cite dataset). Most data points from 2018-2019 period. Only analyzed the contiguous United States and removed some observations that were missing data. This translated to removing ~40 observations out of 52,000 Did log transform of the prices due to the heavy skewness of pricing.  Used Department of Housing’s Fair market rent data from 2019 and also log transformed the pricing. Number of bedrooms, bathrooms and the square footage of an apartment are all key in determining rent pricing. 
+We used a UCI Machine learning apartment dataset (UCI machine learning). Most data points from 2018-2019 period. Only analyzed the contiguous United States and removed some observations that were missing data. This translated to removing ~40 observations out of 52,000. From the histogram of price we decided to log transform the price to make it more normally distributed.
+```{r, message=FALSE, results = "hide", cache=TRUE, warning=FALSE}
+source("../Analysis/EDA_file_100k.R")
+par(mfrow = c(1,2))
+hist(apartments_100k_cleaned$price,main = "Histogram of Price", xlab = "Price")
+hist(log(apartments_100k_cleaned$price), main = "Histogram of Log(Price)", xlab = "Log(Price)")
+```
+\
+Next we decided that we would convert this point data into county level data. This allowed us to add population as a covariate and also the number of observations in each county as a proxy for how active the renting environment is in each county. For number of bathrooms and bedrooms we took the median of all observations in the county and for square footage we took the mean square footage of the observations. Once aggregated into county level data we were left with roughly 1000 observations of counties out of the 3109 counties in the contiguous United States. 
+```{r, message=FALSE, results = "hide", cache=TRUE, warning=FALSE}
+source("../Analysis/Point_To_Areal.R")
+ggplot(joined_data)+
+  geom_sf(aes(fill = price))+
+  scale_fill_gradientn(colours = terrain.colors(8))
+```
 
-We use GWR as a comparison because we know rent is spatially varying (Fuss) and want a statistical model that can give us interpretable coefficients for our covariates. Through a plot of the prices it can be seen that counties near each other are similar in pricing.
+We used Department of Housing’s Fair market rent data from 2019 and also log transformed the pricing (FMR citation). There were roughly 4,400 observations accounting for rent areas across the United States. 
 
-We used XGboost and Random forests for their predictive power and their effectiveness in predicting rent pricing has been seen in (Yoshida). 
+Geographically weighted regression (GWR) is a method of accounting for spatialy varying covariates in a linear regression model (Brundson et al). Go lightly into detail about GWR including model assumptions. Transition sentence into simulation study. 
 
-Compared GWR, Random Forests, and XGboost on predicting and modeling out of sample observations.
+To verify that GWR was an appropriate choice for our data we performed a simulation study that utilized voronoi tessellation to create an artificial spatial area. We ordered the polygons according to their x coordinate in order to get a smooth surface from which we could generate proper coefficients for our covariates. 
+```{r, message=FALSE, results = "hide", cache=TRUE, warning=FALSE}
+source("../Simulation/GWR_simulation.R")
+ggplot(voronoi_polys)+
+  geom_sf(aes(fill = num))+
+  scale_fill_viridis_c()
+```
+We modeled coefficients by generating sequences that roughly matched with the scale of coefficients that we would see with our real data. Go into specific parameters used along with generation of values. 
+
+We use GWR as a comparison because we know rent is spatially varying (Fuss) and want a statistical model that can give us interpretable coefficients for our covariates. The two most important hyperparameters when fitting a GWR model are the kernel and bandwidth. We decided to use an exponential kernel due to how sharp some of the changes are along the coastline and around the Denver, Colorado area [cross reference to EDA above]. We estimated the bandwidth using cross validation and came upon [bandwidth] as the best fit. 
+
+We used XGboost and Random forests for their predictive power and their effectiveness in predicting rent pricing has been seen in (Yoshida). Go into random forests (Breiman) and justify these two as best algorithmic models to compare to using (Yoshida) and (Seya). We optimized hyperparameters using k-fold validation to come upon the best values to be used. 
+
+We compared GWR, Random Forests, and XGboost on predicting and modeling out of sample observations using mean absolute error (MAE), root mean squared error (RMSE), and mean squared error (MSE).
+
 
 # Results
 Plots with our final predictive surface are coming in the next day or two. 

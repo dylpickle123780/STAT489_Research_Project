@@ -30,31 +30,35 @@ ggplot(voronoi_polys)+
 beta_bedrooms = seq(300,600,length.out = number_polys)
 beta_bathrooms = seq(100,200,length.out = number_polys)
 beta_square_footage = seq(0.5,1,length.out = number_polys)
+beta_population = seq(0.005,0.01,length.out = number_polys)
 
 voronoi_polys = voronoi_polys %>% 
   mutate(bedrooms = beta_bedrooms,
          bathrooms =  beta_bathrooms,
-         square_footage = beta_square_footage)
+         square_footage = beta_square_footage,
+         population = beta_population)
 
 #now to generate number of beds and baths and square footage in each area 
 bedrooms_i = rpois(number_polys,2)
 bathrooms_i = rpois(number_polys,2)
 square_feet_i = rnorm(number_polys, mean = 500, sd = 60)
+population_i = rbeta(number_polys,0.2,0.9)*1000000
 
 #assume errors are ~N(0,20)
 voronoi_polys = voronoi_polys %>% 
   mutate(price = bedrooms*bedrooms_i+bathrooms*bathrooms_i
-         +square_footage*square_feet_i 
+         +square_footage*square_feet_i + population*population_i
          + rnorm(50,mean = 0,sd = 20),
          bed_val = bedrooms_i,
          bath_val = bathrooms_i,
-         footage_val = square_feet_i)
+         footage_val = square_feet_i,
+         population_val = population_i)
 
 #Using GWR
 library(GWmodel)
 
 #Turning to spatial data frame
-model_data = voronoi_polys[,c(1,5,6,7,8)] %>% as_Spatial()
+model_data = voronoi_polys[,c(1,6,7,8,9,10)] %>% as_Spatial()
 
 #calculate bandwidth
 model_bandwidth = bw.gwr(model_data$price ~ ., data = model_data,
@@ -70,7 +74,9 @@ model_results = model_gwr$SDF %>% as("sf")
 model_results = model_results%>% 
   mutate("Predicted Price" = yhat) %>%
   mutate("Price Abs Err" = abs(yhat - y)) %>% 
-  mutate("Bedroom coefficient" = bed_val)
+  mutate("Bedroom coefficient" = bed_val) %>% 
+  mutate("Bathrooms coefficient" = bath_val) %>% 
+  mutate("Population coefficient" = population_val)
 
 #First plot Predicted Value 
 #Second plot Absolute Error
