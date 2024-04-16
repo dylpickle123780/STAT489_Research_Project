@@ -91,19 +91,44 @@ ggplot(voronoi_polys)+
 ```
 We modeled coefficients by generating sequences that roughly matched with the scale of coefficients that we would see with our real data. Go into specific parameters used along with generation of values. 
 
-We use GWR as a comparison because we know rent is spatially varying (Fuss) and want a statistical model that can give us interpretable coefficients for our covariates. The two most important hyperparameters when fitting a GWR model are the kernel and bandwidth. We decided to use an exponential kernel due to how sharp some of the changes are along the coastline and around the Denver, Colorado area [cross reference to EDA above]. We estimated the bandwidth using cross validation and came upon [bandwidth] as the best fit. 
+We use GWR as a comparison because we know rent is spatially varying (Fuss) and want a statistical model that can give us interpretable coefficients for our covariates. The two most important hyperparameters when fitting a GWR model are the kernel and bandwidth. We decided to use an exponential kernel due to how sharp some of the changes are along the coastline and around the Denver, Colorado area [cross reference to EDA above]. We estimated the bandwidth using cross validation and came upon [bandwidth] as the best fit.
+
+To get a surface that covered the entire United States we then used leave one out predictions holding all of the covariates at their median or mean in order to get a surface that showed rent pricing as a function solely of space. We repeated the same process with the fair market rent data in order to have two surfaces that depended only on space that we could compare. Transition into comparisons with other models. 
 
 We used XGboost and Random forests for their predictive power and their effectiveness in predicting rent pricing has been seen in (Yoshida). Go into random forests (Breiman) and justify these two as best algorithmic models to compare to using (Yoshida) and (Seya). We optimized hyperparameters using k-fold validation to come upon the best values to be used. 
 
-We compared GWR, Random Forests, and XGboost on predicting and modeling out of sample observations using mean absolute error (MAE), root mean squared error (RMSE), and mean squared error (MSE).
+We compared GWR, Random Forests, and XGboost on predicting and modeling out of sample observations using mean absolute error (MAE), root mean squared error (RMSE), and mean squared error (MSE). Explain training split and transition into Results. 
 
 
 # Results
-Plots with our final predictive surface are coming in the next day or two. 
 
-Table showing that the out of sample error (MSE, RMSE, MAE) was similar across all 3 models.
+Our simulation study resulted in a model that had residuals with no spatial correlation as can be seen in Figure below. The MAE for the model was `r round(mean(abs(simulation_results$residual)),2)`. Given that the average price in this data set was `r round(mean(voronoi_polys$price),2)` this model also had an estimated $R^2$ value of `r round(simulation_model_gwr$GW.diagnostic$gwR2.adj,4)` showing that it was very good at explaining the variability in our simulated data. 
+```{r, message=FALSE, results = "hide", cache=TRUE, warning=FALSE}
+ggplot(voronoi_polys)+
+  geom_sf(aes(fill = abs(simulation_results$residual)))+
+  scale_fill_viridis_c(name = "Mean absolute price error")
 
-Choosing Random Forest due to its predictive power.
+```
+Show coefficient plots and how they closely follow the true values. Transition sentence into using on real data.
+
+Using the real data and predicting at every county we were able to find a predictive surface that showed rent pricing on a log scale as a function of space.
+```{r, message=FALSE, results = "hide", cache=TRUE, warning=FALSE}
+source("../Analysis/GWR_Project.R")
+ggplot(model_results)+
+  geom_sf(aes(fill = prediction))+
+  scale_fill_gradientn(colors = terrain.colors(8),name = "Log(Price)")
+```
+We then created the difference surface that was calculated by subtracting the prediction of the real data from the prediction of the fair market rent data. To get a surface that was on the same level as our original response of price we first transformed the real data prediction and fair market rent data before subtracting. 
+```{r}
+ggplot(model_results)+
+  geom_sf(aes(fill = re_scale_diff), name = "Price difference")+
+  scale_fill_viridis_c()
+```
+\
+Show model diagnostics and coefficients that are significant. Explain what these are showing and transition into model comparisons. 
+
+We considered GWR, random forests, and XGBoost when choosing our models. The out of sample training split provided us with three different measures of predictive accuracy to compare. Table showing that the out of sample error (MSE, RMSE, MAE) was similar across all 3 models. Explain how the similarity between these errors lead to choosing GWR for reasons such as interpretability and continuous coefficient surfaces. 
+
 
 # Discussion
 We found that in (select locations and POIs later) probably going to be Denver, Dallas, and College Station. There is an unexpected difference between these urban areas and their surrounding counties. We theorize it is because of (discuss reason here). These policies and geographic constraints lead to the results we are seeing in these areas. 
@@ -115,7 +140,6 @@ We also have to be considerate of our high p values which are unnaturally high b
 As expected though the urban coasts are far more unfair compared to the FMR data.
 
 We can use the metric to assess where in the US is deemed unfair. We can also see where funding can be reallocated from areas where the housing costs are lower than the FMR value 
-
 
 
 

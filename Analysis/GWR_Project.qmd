@@ -32,7 +32,6 @@ model_basic = gwr.basic(price ~ ., data = model_data, kernel = "exponential",
                         bw = model_bandwidth, parallel.method = "omp")
 ```
 
-
 ```{r}
 #Source in functions for plotting
 source("../Functions/GWR_implementation.R")
@@ -184,4 +183,3 @@ ggarrange(pl_bedrooms,pl_bathrooms,pl_Count,pl_square_feet,pl_population,nrow = 
           labels = c("Bedrooms","Bathrooms","Count","Square Feet","Population"))
 
 ```
-

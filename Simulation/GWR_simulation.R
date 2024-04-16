@@ -58,20 +58,20 @@ voronoi_polys = voronoi_polys %>%
 library(GWmodel)
 
 #Turning to spatial data frame
-model_data = voronoi_polys[,c(1,6,7,8,9,10)] %>% as_Spatial()
+simulation_model_data = voronoi_polys[,c(1,6,7,8,9,10)] %>% as_Spatial()
 
 #calculate bandwidth
-model_bandwidth = bw.gwr(model_data$price ~ ., data = model_data,
+simulation_model_bandwidth = bw.gwr(simulation_model_data$price ~ ., data = simulation_model_data,
                          kernel = "exponential", parallel.method = "omp")
 
 #run model with calculated bandwidth and return model
-model_gwr = gwr.basic(model_data$price ~ ., data = model_data,
-                      bw = model_bandwidth, kernel = "exponential", 
+simulation_model_gwr = gwr.basic(simulation_model_data$price ~ ., data = simulation_model_data,
+                      bw = simulation_model_bandwidth, kernel = "exponential", 
                       parallel.method = "omp")
 
-model_results = model_gwr$SDF %>% as("sf")
+simulation_results = simulation_model_gwr$SDF %>% as("sf")
 
-model_results = model_results%>% 
+simulation_results = simulation_results%>% 
   mutate("Predicted Price" = yhat) %>%
   mutate("Price Abs Err" = abs(yhat - y)) %>% 
   mutate("Bedroom coefficient" = bed_val) %>% 
@@ -82,6 +82,6 @@ model_results = model_results%>%
 #Second plot Absolute Error
 #Third plot bedroom coefficient
 
-MAE = mean(abs(model_results$residual))
-MSE = mean(model_results$residual^2)
-RMSE = sqrt(mean(model_results$residual^2))
+MAE_simulation = mean(abs(simulation_results$residual))
+MSE_simulation = mean(simulation_results$residual^2)
+RMSE_simulation = sqrt(mean(simulation_results$residual^2))
