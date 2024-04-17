@@ -6,8 +6,7 @@ library(sf)
 library(ggfortify)
 
 #loading in datasets
-apartments_100k = read.csv("./Data/apartments_for_rent_classified_100K.csv",sep=";")
-fmr_2024 = read_xlsx("./Data/FMR2024_final_revised.xlsx")
+apartments_100k = read.csv("../Data/apartments_for_rent_classified_100K.csv",sep=";")
 
 #Cleaning data for 100k file
 #fmr_2024 file already cleaned
@@ -23,16 +22,6 @@ apartments_100k_cleaned <- apartments_100k %>%
          square_feet = as.numeric(square_feet)) %>% 
   filter(price<10000)
 
-#reading in US shapefile to underlay the data
-US_sh_file = read_sf("./Data/Country_Shape_file/cb_2022_us_state_500k.shx")
-
-
-#creating basic plot with just price and latitude longitude
-
-ggplot(aes(),data=US_sh_file[-c(19,29,35,48,53,54,55),]) + #subtractions of geometry include territories and AK HI
-  geom_sf()+
-  geom_point(aes(x=longitude,y=latitude,color=price),data = apartments_100k_cleaned)+
-  scale_color_gradientn(colours = terrain.colors(8))
 
 #Basic lm model
 rent_pricing_model = lm(price~.-state,data=apartments_100k_cleaned)
@@ -43,6 +32,6 @@ summary(rent_pricing_model)
 variable_correlations <- cor(apartments_100k_cleaned[,-4])
 
 #save cleaned file for using in analysis
-save(apartments_100k_cleaned,file = "Data/Cleaned_100k_data.Rdata")
+save(apartments_100k_cleaned,file = "../Data/Cleaned_100k_data.Rdata")
 
 

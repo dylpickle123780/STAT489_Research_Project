@@ -4,7 +4,7 @@ library(sf)
 library(sp)
 library(ggfortify)
 library(covidcast)
-load("./Data/Cleaned_100k_data.Rdata")
+load("../Data/Cleaned_100k_data.Rdata")
 
 #Transforming into coordinates
 apartment_point = SpatialPointsDataFrame(coords = apartments_100k_cleaned[,c(3,2)],
@@ -13,7 +13,7 @@ apartment_point =  st_as_sf(apartment_point)
 apartment_point <- st_set_crs(apartment_point,4326)
 
 #Loading County Shape
-US_sh_file = st_read("./Data/cb_2022_us_county_5m/cb_2022_us_county_5m.shx")
+US_sh_file = st_read("../Data/cb_2022_us_county_5m/cb_2022_us_county_5m.shx")
 
 #Remove Alaska Hawaii and territories
 US_sh_file = US_sh_file %>% 
@@ -39,4 +39,4 @@ joined_data = joined_data %>%
 
 
 #save joined data for use in models
-save(joined_data,file = "Data/100k_shape_data.Rdata")
+save(joined_data,file = "../Data/100k_shape_data.Rdata")
