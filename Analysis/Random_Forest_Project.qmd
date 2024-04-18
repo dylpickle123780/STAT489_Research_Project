@@ -6,7 +6,7 @@ editor: visual
 
 ## RF on Total Data
 
-Below is the set up for the Random Forest where we used centroid geometry to establish the dataset. Wethen split the data by the price adjusted delta which is an old metric that we used that is the difference from the mean difference of the FMR and Apartment data. Then, created a partition between the training and testing data for an 4:1 split. Finally for the set up, we created the compute cluster (10 logical processors in my case) to start the training block.
+Below is the set up for the Random Forest where we used centroid geometry to establish the dataset. We then split the data by the price adjusted delta which is an old metric that we used that is the difference from the mean difference of the FMR and Apartment data. Then, created a partition between the training and testing data for an 4:1 split. Finally for the set up, we created the compute cluster (10 logical processors in my case) to start the training block.
 
 ```{r}
 #Load
@@ -46,6 +46,8 @@ compute_cluster = makeCluster(10)
 registerDoParallel(compute_cluster)
 ```
 
+We then created the Random Forest Grid that we train the data on with the function calls that the RF_implementation has which is functions like training and control functions as we have learned in class. It also contains a prediction function so we can layer it over the whole United States.
+
 ```{r}
 
 ####### Random Forest #########
@@ -83,6 +85,8 @@ total_data$predictions = full_model_predictions
 stopCluster(compute_cluster)
 
 ```
+
+The plotting data is incomplete because the foundational data does not contain all the counties however it provides a prediction value for all the datapoints.
 
 ```{r}
 #plotting fitted values
