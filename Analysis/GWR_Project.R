@@ -16,11 +16,19 @@ model_data = joined_data %>%
   as_Spatial() 
 
 #Selecting Bandwidth
-model_bandwidth = bw.gwr(price ~ ., data = model_data,
+model_bandwidth = bw.gwr(price ~ Count + bedrooms + bathrooms + square_feet + population, data = model_data,
                          kernel = "exponential", parallel.method = "omp")
 
-model_basic = gwr.basic(price ~ ., data = model_data, kernel = "exponential",
+model_basic = gwr.basic(price ~ Count + bedrooms + bathrooms + square_feet + population, data = model_data, kernel = "exponential",
                         bw = model_bandwidth, parallel.method = "omp")
+
+model_coefficients = cbind(model_basic$SDF$Count, model_basic$SDF$bedrooms, model_basic$SDF$bathrooms,
+                           model_basic$SDF$square_feet, model_basic$SDF$population)
+
+multicollin_diagnostic = gwr.collin.diagno(price ~ Count + bedrooms + bathrooms + square_feet + population, data = model_data, kernel = "exponential",
+                                           bw = model_bandwidth)
+
+model_adjusted = gwr.t.adjust(model_basic)
 
 #Source in functions for plotting
 source("../Functions/GWR_implementation.R")
@@ -120,28 +128,23 @@ gwr.montecarlo(price ~ ., data = model_data, kernel = "exponential",
 
 print(model_basic)
 
-model_diag_results = model_basic$SDF %>% as("sf") %>% 
-  mutate(bedrooms_TV = 2*(1-pt(abs(bedrooms_TV), 671)),
-         bathrooms_TV = 2*(1-pt(abs(bathrooms_TV), 671)),
-         Count_TV = 2*(1-pt(abs(Count_TV), 671)),
-         square_feet_TV = 2*(1-pt(abs(square_feet_TV),671)),
-         population_TV = 2*(1-pt(abs(population_TV),671)))
+model_diag_results = model_adjusted$SDF %>% as("sf")
 
-plot_significance = function(data = model_diag_results, par){
+plot_significance = function(data = model_diag_results, par, coefficient){
   plot = ggplot(data)+
-    geom_sf(aes(fill = ifelse(par > 0.95,
-                              ifelse(par > 0.99, 
-                                     ">0.99",">0.95"),"<0.95")))+
-    scale_fill_manual(name = "P-value",values = c("red","grey","black"))
+    geom_sf(aes(fill = ifelse(par <= 0.05, coefficient, NA)))+
+    scale_fill_viridis_c(name = "P")
   return(plot)
 }
 
-pl_bedrooms = plot_significance(par = model_diag_results$bedrooms_TV)
+pl_bedrooms = plot_significance(par = model_diag_results$bedrooms_p_fb, coefficient = model_coefficients[,4])
 
-pl_bathrooms = plot_significance(par = model_diag_results$bathrooms_TV)
+pl_bathrooms = plot_significance(par = model_diag_results$bathrooms_p_fb, coefficient = model_coefficients[,4])
 
-pl_Count = plot_significance(par = model_diag_results$Count_TV)
+pl_Count = plot_significance(par = model_diag_results$Count_p_fb, coefficient = model_coefficients[,4])
 
-pl_square_feet = plot_significance(par = model_diag_results$square_feet_TV)
+pl_square_feet = plot_significance(par = model_diag_results$square_feet_p_fb, coefficient = model_coefficients[,4])
 
-pl_population = plot_significance(par = model_diag_results$population_TV)
+pl_population = plot_significance(par = model_diag_results$population_p_fb, coefficient = model_coefficients[,4])
+
+

@@ -3,9 +3,15 @@ title: "Fair Market Rent Difference: A Spatial Analysis of Unfair Housing Prices
 format:
   arxiv-pdf:
     keep-tex: true  
-    linenumbers: false
-    doublespacing: false
+    linenumbers: true
+    doublespacing: true
     runninghead: "A Preprint"
+    include-in-header: 
+      text: |
+        \usepackage{hyperref}
+        \usepackage{cleveref}
+        
+        \crefname{figure}{Figure}{Figures}
   arxiv-html: default
 author:
   - name: Dylan Michaels
@@ -30,9 +36,9 @@ abstract: |
   The fair market rent (FMR) system in the United States is used by the Department of Housing to ascertain what housing should cost in any given county based on economic factors, however reality often does not reflect this estimate as other factors push the cost of housing higher. We propose Fair Market Rent Difference as an analysis technique that leverages Random Forests in order to find where in the United States there is an abnormal difference between the FMR and the actual market rent. With Geographically Weighted Regression, we are able to accurately create a predictive field that shows these disparities and what areas they are formed in. The analysis allows for a broad overlook of how housing unaffordability fluctuates with respect to space when it is compared to a price point that is based on the economic data of the county. This analysis can be a baseline for future research into market conditions that drive regions of the US to have higher than expected prices by the government to then enact policy for housing affordability in unsuspecting places.
 
 keywords: 
-  - template
-  - demo
-bibliography: bibliography.bib  
+  - Geographically Weighted Regression
+  - Rent Pricing
+bibliography: 489_SP24_Group2.bib
 ---
 
 # Introduction {#sec-intro}
@@ -67,48 +73,46 @@ Ezebilo paper modeling rent and discuss limitations of model applied in paper (n
 Discuss McCord et al, Yoshida and Seya papers. All doing very similar things with GWR and algorithmic models so go into depth discussing similarities and differences from our own datasets and domain problem. Show what results came from these and how our application is different (location and scale).
 
 # Methods
-We used a UCI Machine learning apartment dataset (UCI machine learning). Most data points from 2018-2019 period. Only analyzed the contiguous United States and removed some observations that were missing data. This translated to removing ~40 observations out of 52,000. From the histogram of price we decided to log transform the price to make it more normally distributed.
-```{r, message=FALSE, results = "hide", cache=TRUE, warning=FALSE}
-source("../Analysis/EDA_file_100k.R")
-par(mfrow = c(1,2))
-hist(apartments_100k_cleaned$price,main = "Histogram of Price", xlab = "Price")
-hist(log(apartments_100k_cleaned$price), main = "Histogram of Log(Price)", xlab = "Log(Price)")
-```
-\
-Next we decided that we would convert this point data into county level data. This allowed us to add population as a covariate and also the number of observations in each county as a proxy for how active the renting environment is in each county. For number of bathrooms and bedrooms we took the median of all observations in the county and for square footage we took the mean square footage of the observations. Once aggregated into county level data we were left with roughly 1000 observations of counties out of the 3109 counties in the contiguous United States. 
-```{r, message=FALSE, results = "hide", cache=TRUE, warning=FALSE}
-source("../Analysis/Point_To_Areal.R")
-ggplot(joined_data)+
-  geom_sf(aes(fill = price))+
-  scale_fill_gradientn(colours = terrain.colors(8))
+```{r, echo=FALSE}
+set.seed("123780")
 ```
 
-We used Department of Housing’s Fair market rent data from 2019 and also log transformed the pricing (FMR citation). There were roughly 4,400 observations accounting for rent areas across the United States. 
+  We used data from the UCI Machine learning website that had an apartment dataset containing roughly 52,000 observations over the entire United States. We believe this to be a representative sample of the overall housing market as there was data from all 50 states with a wide and representative range of housing prices [@unknown_apartment_2019]. The observations in this dataset are from the 2018-2019 period. We only analyzed the contiguous United States and removed some observations that were missing data. This translated to removing ~40 observations out of 52,000. From the histogram of price we decided to log transform the price to make it more normally distributed as can be seen in \cref{fig-transform}.
+  
+  Next we decided that we would convert this point data into county level data. This allowed us to add population as a covariate and also the number of observations in each county as a proxy for how active the renting environment is in each county. We decided to do this to also have the fair market data at the same level as the actual data. For number of bathrooms and bedrooms we took the median of all observations in the county and for square footage we took the mean square footage of the observations. Once aggregated into county level data we were left with roughly 1000 observations of counties out of the 3109 counties in the contiguous United States. 
 
-Geographically weighted regression (GWR) is a method of accounting for spatialy varying covariates in a linear regression model (Brundson et al). Go lightly into detail about GWR including model assumptions. Transition sentence into simulation study. 
+We used the Department of Housing’s Fair market rent data from 2019 for our fair market data and also log transformed the pricing []. There were roughly 4,400 observations accounting for rent areas across the United States at roughly the county level. Shouro explain how they derived the fair market housing values.
 
-To verify that GWR was an appropriate choice for our data we performed a simulation study that utilized voronoi tessellation to create an artificial spatial area. We ordered the polygons according to their x coordinate in order to get a smooth surface from which we could generate proper coefficients for our covariates. 
-```{r, message=FALSE, results = "hide", cache=TRUE, warning=FALSE}
+Geographically weighted regression (GWR) is a method of accounting for spatially varying covariates in a linear regression model [@brunsdon_geographically_1998]. The assumptions of geographically weighted regression are very similar to that of a simple weighted least squares model where the weights are calculated using some kernel function. One key difference is that the weight matrix is calculated for each observation rather than a fixed global weight matrix. Since one aspect of GWR is that coefficients vary smoothly over the space, observations closer to each other will have a greater influence on each other. Since calculating and inverting this matrix for each observation against all the other observations would be computationally problematic, a bandwidth parameter is introduced. This allows the weight matrix to only take into account all obervations within the range of the bandwidth. 
+
+To verify that GWR was an appropriate choice for our data we performed a simulation study that utilized voronoi tessellation to create an artificial spatial area. We created an area of 500 polygons to simulate data from. We modeled coefficients by generating sequences that utilized both the x and y coordinates to form a smooth spatially varying set of coefficients. Each of the coefficients used some linear combination of cos, sin, and tan to generate spatially varying coefficients as can be seen below.
+```{r, message=FALSE, results = "hide", cache=TRUE, warning=FALSE, output = FALSE}
 source("../Simulation/GWR_simulation.R")
 ggplot(voronoi_polys)+
-  geom_sf(aes(fill = num))+
-  scale_fill_viridis_c()
+  geom_sf(aes(fill = beta_bathrooms))+
+  scale_fill_viridis_c(name = "Coefficient Value")+
+  theme_bw()
+ggsave("Sim_coefficients.png", path = "./report_files/figure-pdf")
 ```
-We modeled coefficients by generating sequences that roughly matched with the scale of coefficients that we would see with our real data. Go into specific parameters used along with generation of values. 
+![Plot of simulated bathroom coefficients](./report_files/figure-pdf/Sim_coefficients.png)
+To simulate observations from this data we used three different distributions. For number of bathrooms and bedrooms we sampled from a poission distribution with a lambda parameter of 1 and then added 1 to the value. This gave us a vector of values that had a minimum of 1 with a maximum of 6 and 7 for bathrooms and bedrooms respectively. This is about the range of values that we observed in our real dataset. For square footage we sampled from a normal distribution with mean 500 and standard deviation of 60 and this was also on the same scale as our data. For population observatins we sampled from a beta distribution with scale parameters of 0.2 and 0.9 scaled by 1000000. This gave us a skewed distribution very similar to population values in the United States with most counties having very low populations and a select few having extremely high populations. The generated values can be seen here in \cref{fig-simul}. 
 
-We use GWR as a comparison because we know rent is spatially varying (Fuss) and want a statistical model that can give us interpretable coefficients for our covariates. The two most important hyperparameters when fitting a GWR model are the kernel and bandwidth. We decided to use an exponential kernel due to how sharp some of the changes are along the coastline and around the Denver, Colorado area [cross reference to EDA above]. We estimated the bandwidth using cross validation and came upon [bandwidth] as the best fit.
+Another reason for choosing GWR is due to knowing from Fuss and Koller that there will be a spatial structure in our model that needs to be accounted for [@fuss_role_2016]. We also want a statistical model that can give us interpretable coefficients for our covariates. This is what led us to adopting GWR over algorithmic models that may have better predictive power. We address algorithmic models below as a comparison test.
 
-To get a surface that covered the entire United States we then used leave one out predictions holding all of the covariates at their median or mean in order to get a surface that showed rent pricing as a function solely of space. We repeated the same process with the fair market rent data in order to have two surfaces that depended only on space that we could compare. Transition into comparisons with other models. 
+When creating a GWR model the two most important hyperparameters are the kernel and bandwidth. We decided to use an exponential kernel due to how sharp some of the changes are between counties along the coastline and around the Denver, Colorado area. We estimated the bandwidth using cross validation and came upon as the best fit.
 
-We used XGboost and Random forests for their predictive power and their effectiveness in predicting rent pricing has been seen in (Yoshida). Go into random forests (Breiman) and justify these two as best algorithmic models to compare to using (Yoshida) and (Seya). We optimized hyperparameters using k-fold validation to come upon the best values to be used. 
+To get a surface that covered the entire United States we then used leave one out predictions holding all of the covariates at their median or mean in order to get a surface that showed rent pricing as a function solely of space. We repeated the same process with the fair market rent data in order to have two surfaces that depended only on space that we could compare. We then subtracted these two surfaces to obtain a metric that measured the difference between the fair market and realized values in each county. To compare the accuracy and assess the validity of our GWR model we compared it against algorithmic models on out of comparison tests. 
 
-We compared GWR, Random Forests, and XGboost on predicting and modeling out of sample observations using mean absolute error (MAE), root mean squared error (RMSE), and mean squared error (MSE). Explain training split and transition into Results. 
+We used XGboost and Random forests for their predictive power and their effectiveness in predicting rent pricing has been seen in [@yoshida_spatial_2022]. Random forests have been  (Breiman) and
+. Yoshida et al. showed that both XGBoost and Random Forest with coordinates performed better than the deep neural network shown in the paper by Seya et al. [@noauthor_comparison_nodate]. We optimized hyperparameters using k-fold validation to come upon the best values to be used. 
+
+We compared GWR, Random Forests, and XGboost on predicting and modeling out of sample observations using mean absolute error (MAE), root mean squared error (RMSE), and mean squared error (MSE). We used an 80 20 training split which gave us roughly 800 training observations and 200 testing observations. This comparison along with our simualtion study helped solidify our choice of GWR. 
 
 
 # Results
 
 Our simulation study resulted in a model that had residuals with no spatial correlation as can be seen in Figure below. The MAE for the model was `r round(mean(abs(simulation_results$residual)),2)`. Given that the average price in this data set was `r round(mean(voronoi_polys$price),2)` this model also had an estimated $R^2$ value of `r round(simulation_model_gwr$GW.diagnostic$gwR2.adj,4)` showing that it was very good at explaining the variability in our simulated data. 
-```{r, message=FALSE, results = "hide", cache=TRUE, warning=FALSE}
+```{r, message=FALSE, results = "hide", cache=TRUE, warning=FALSE, output = FALSE}
 ggplot(voronoi_polys)+
   geom_sf(aes(fill = abs(simulation_results$residual)))+
   scale_fill_viridis_c(name = "Mean absolute price error")
@@ -117,14 +121,15 @@ ggplot(voronoi_polys)+
 Show coefficient plots and how they closely follow the true values. Transition sentence into using on real data.
 
 Using the real data and predicting at every county we were able to find a predictive surface that showed rent pricing on a log scale as a function of space.
-```{r, message=FALSE, results = "hide", cache=TRUE, warning=FALSE}
+```{r, message=FALSE, results = "hide", cache=TRUE, warning=FALSE, output = FALSE}
 source("../Analysis/GWR_Project.R")
 ggplot(model_results)+
   geom_sf(aes(fill = prediction))+
   scale_fill_gradientn(colors = terrain.colors(8),name = "Log(Price)")
 ```
 We then created the difference surface that was calculated by subtracting the prediction of the real data from the prediction of the fair market rent data. To get a surface that was on the same level as our original response of price we first transformed the real data prediction and fair market rent data before subtracting. 
-```{r}
+```{r, message=FALSE, results = "hide", cache=TRUE, warning=FALSE, output = FALSE}
+library(ggplot2)
 ggplot(model_results)+
   geom_sf(aes(fill = re_scale_diff), name = "Price difference")+
   scale_fill_viridis_c()
@@ -152,77 +157,38 @@ If people are housed they are less likely to do XYZ thing.
 
 Show how urban housing has a disproportionate effect than investing in rural areas because their housing is fair anyways. However, it is important to note that there still needs to be rural funding because there are less economic opportunities in rural areas so they tend to have fairer housing options. 
 
+# Appendix
 
-# Citations
+```{r hist-trans}
+#| label: fig-transform
+#| fig-cap: "Log transform histograms"
+#| echo: false
+#| message: false
+#| warning: false
+#| results: hide
 
-This section of the template is adapted from the [Quarto citation documentation](https://quarto.org/docs/authoring/footnotes-and-citations.html).
 
-Quarto supports bibliography files in a wide variety of formats including BibTeX and CSL. Add a bibliography to your document using the `bibliography` YAML metadata field. For example:
-
-``` yaml
----
-title: "My Document"
-bibliography: references.bib
----
+source("../Analysis/EDA_file_100k.R")
+par(mfrow = c(1,2))
+hist(apartments_100k_cleaned$price,main = "Histogram of Price", xlab = "Price")
+hist(log(apartments_100k_cleaned$price), main = "Histogram of Log(Price)", xlab = "Log(Price)")
 ```
 
-See the [Pandoc Citations](https://pandoc.org/MANUAL.html#citations) documentation for additional information on bibliography formats.
+```{r}
+#| label: fig-simul
+#| fig-cap: "Log transform histograms"
+#| echo: false
+#| message: false
+#| warning: false
+#| results: hide
 
-## Citation Syntax {#sec-citations}
 
-Quarto uses the standard Pandoc markdown representation for citations. Here are some examples:
+source("../Simulation/GWR_simulation.R")
+par(mfrow = c(2,2))
+hist(bathrooms_i,main = "Bathroom simulated observations", xlab = "# Bathrooms")
+hist(bedrooms_i, main = "Bedroom simulated observations", xlab = "# Bedrooms")
+hist(square_feet_i, main = "Square Footage simulated observations", xlab = "Square Feet")
+hist(population_i, main = "Population simulated observations", xlab = "Population")
 
-+---------------------------------------+-------------------------------------------------------------------+
-| Markdown Format                       | Output                                                            |
-+=======================================+===================================================================+
-| ```                                   | Blah Blah [see @knuth1984, pp. 33-35; also @wickham2015, chap. 1] |
-| Blah Blah [see @knuth1984, pp. 33-35; |                                                                   |
-| also @wickham2015, chap. 1]           |                                                                   |
-| ```                                   |                                                                   |
-+---------------------------------------+-------------------------------------------------------------------+
-| ```                                   | Blah Blah [@knuth1984, pp. 33-35, 38-39 and passim]               |
-| Blah Blah [@knuth1984, pp. 33-35,     |                                                                   |
-| 38-39 and passim]                     |                                                                   |
-| ```                                   |                                                                   |
-+---------------------------------------+-------------------------------------------------------------------+
-| ```                                   | Blah Blah [@wickham2015; @knuth1984].                             |
-| Blah Blah [@wickham2015; @knuth1984]. |                                                                   |
-| ```                                   |                                                                   |
-+---------------------------------------+-------------------------------------------------------------------+
-| ```                                   | Wickham says blah [-@wickham2015]                                 |
-| Wickham says blah [-@wickham2015]     |                                                                   |
-| ```                                   |                                                                   |
-+---------------------------------------+-------------------------------------------------------------------+
-
-You can also write in-text citations, as follows:
-
-+-------------------------------+-------------------------------+
-| Markdown Format               | Output                        |
-+===============================+===============================+
-| ```                           | @knuth1984 says blah.         |
-| @knuth1984 says blah.         |                               |
-| ```                           |                               |
-+-------------------------------+-------------------------------+
-| ```                           | @knuth1984 [p. 33] says blah. |
-| @knuth1984 [p. 33] says blah. |                               |
-| ```                           |                               |
-+-------------------------------+-------------------------------+
-
-See the [Pandoc Citations](https://pandoc.org/MANUAL.html#citations) documentation for additional information on citation syntax.
-
-To provide a custom citation stylesheet, provide a path to a CSL file using the `csl` metadata field in your document, for example:
-
-``` yaml
----
-title: "My Document"
-bibliography: references.bib
-csl: nature.csl
----
 ```
 
-{{< pagebreak >}}
-
-# References {.unnumbered}
-
-::: {#refs}
-:::

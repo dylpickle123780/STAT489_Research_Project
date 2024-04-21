@@ -17,19 +17,15 @@ voronoi_polys = st_sample(square_bound, number_polys) %>%
   st_collection_extract() %>% st_intersection(square_bound) %>% st_sf() %>% 
   mutate(center = st_coordinates(st_centroid(geometry)))
 
-voronoi_polys = voronoi_polys[order(voronoi_polys$center[,1]),1]
-
-
-ggplot(voronoi_polys)+
-  geom_sf(aes(fill = num))
-
 #Generating data 
 
 #each bedroom will increase rent by anywhere from 300 to 600
-beta_bedrooms = seq(300,600,length.out = number_polys)
-beta_bathrooms = seq(100,200,length.out = number_polys)
-beta_square_footage = seq(0.5,1,length.out = number_polys)
-beta_population = seq(0.005,0.01,length.out = number_polys)
+beta_bedrooms = sin(3*voronoi_polys$center[,1]+3*voronoi_polys$center[,2])
+beta_bathrooms = cos(5*voronoi_polys$center[,1])+cos(3*voronoi_polys$center[,2])
+beta_square_footage = tan(1/2*voronoi_polys$center[,1]+1/2*voronoi_polys$center[,2])
+beta_population = cos(3*voronoi_polys$center[,1])+sin(5*voronoi_polys$center[,2])
+
+voronoi_polys = voronoi_polys[,1]
 
 voronoi_polys = voronoi_polys %>% 
   mutate(bedrooms = beta_bedrooms,
@@ -38,8 +34,8 @@ voronoi_polys = voronoi_polys %>%
          population = beta_population)
 
 #now to generate number of beds and baths and square footage in each area 
-bedrooms_i = rpois(number_polys,2)
-bathrooms_i = rpois(number_polys,2)
+bedrooms_i = rpois(number_polys,1)+1
+bathrooms_i = rpois(number_polys,1)+1
 square_feet_i = rnorm(number_polys, mean = 500, sd = 60)
 population_i = rbeta(number_polys,0.2,0.9)*1000000
 
