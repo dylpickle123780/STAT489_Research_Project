@@ -6,7 +6,7 @@ library(ggfortify)
 library(ggpubr)
 library(covidcast)
 library(tigris)
-
+library(caret)
 load("../Data/100k_shape_data.Rdata")
 
 #Turning to spatial
@@ -16,11 +16,22 @@ model_data = joined_data %>%
   as_Spatial() 
 
 #Selecting Bandwidth
-model_bandwidth = bw.gwr(price ~ ., data = model_data,
+model_bandwidth = bw.gwr(price ~ Count + bedrooms + bathrooms + square_feet + population, data = model_data,
                          kernel = "exponential", parallel.method = "omp")
 
-model_basic = gwr.basic(price ~ ., data = model_data, kernel = "exponential",
+#running model
+model_basic = gwr.basic(price ~ Count + bedrooms + bathrooms + square_feet + population, data = model_data, kernel = "exponential",
                         bw = model_bandwidth, parallel.method = "omp")
+
+#Extracting model coefficients
+model_coefficients = cbind(model_basic$SDF$Count, model_basic$SDF$bedrooms, model_basic$SDF$bathrooms,
+                           model_basic$SDF$square_feet, model_basic$SDF$population)
+
+#multicollinearity diagnostics
+multicollin_diagnostic = gwr.collin.diagno(price ~ Count + bedrooms + bathrooms + square_feet + population, data = model_data, kernel = "exponential",
+                                           bw = model_bandwidth)
+
+model_adjusted = gwr.t.adjust(model_basic)
 
 #Source in functions for plotting
 source("../Functions/GWR_implementation.R")
@@ -92,9 +103,9 @@ model_results$diff = model_results$prediction-model_results_fmr$prediction
 
 model_results$re_scale_diff = exp(model_results$prediction) - exp(model_results_fmr$prediction)
 
-#Significance tests for nonstationarity 
 library(hexbin)
 
+#coefficient plots
 pl_1 = ggplot(model_results)+
   geom_sf(aes(fill = bedrooms_coef))+
   scale_fill_viridis_c(option = "magma")
@@ -115,33 +126,56 @@ pl_5 = ggplot(model_results)+
   geom_sf(aes(fill = population_coef))+
   scale_fill_viridis_c(option = "magma")
 
-gwr.montecarlo(price ~ ., data = model_data, kernel = "exponential", 
+#Significance tests for nonstationarity 
+significance_test = gwr.montecarlo(price ~ ., data = model_data, kernel = "exponential", 
                bw =  model_bandwidth)
 
 print(model_basic)
 
-model_diag_results = model_basic$SDF %>% as("sf") %>% 
-  mutate(bedrooms_TV = 2*(1-pt(abs(bedrooms_TV), 671)),
-         bathrooms_TV = 2*(1-pt(abs(bathrooms_TV), 671)),
-         Count_TV = 2*(1-pt(abs(Count_TV), 671)),
-         square_feet_TV = 2*(1-pt(abs(square_feet_TV),671)),
-         population_TV = 2*(1-pt(abs(population_TV),671)))
+model_diag_results = model_adjusted$SDF %>% as("sf")
 
-plot_significance = function(data = model_diag_results, par){
+plot_significance = function(data = model_diag_results, par, coefficient){
   plot = ggplot(data)+
-    geom_sf(aes(fill = ifelse(par > 0.95,
-                              ifelse(par > 0.99, 
-                                     ">0.99",">0.95"),"<0.95")))+
-    scale_fill_manual(name = "P-value",values = c("red","grey","black"))
+    geom_sf(aes(fill = ifelse(par <= 0.05, coefficient, NA)))+
+    scale_fill_viridis_c(name = "P")
   return(plot)
 }
 
-pl_bedrooms = plot_significance(par = model_diag_results$bedrooms_TV)
+pl_bedrooms = plot_significance(par = model_diag_results$bedrooms_p_fb, coefficient = model_coefficients[,4])
 
-pl_bathrooms = plot_significance(par = model_diag_results$bathrooms_TV)
+pl_bathrooms = plot_significance(par = model_diag_results$bathrooms_p_fb, coefficient = model_coefficients[,4])
 
-pl_Count = plot_significance(par = model_diag_results$Count_TV)
+pl_Count = plot_significance(par = model_diag_results$Count_p_fb, coefficient = model_coefficients[,4])
 
-pl_square_feet = plot_significance(par = model_diag_results$square_feet_TV)
+pl_square_feet = plot_significance(par = model_diag_results$square_feet_p_fb, coefficient = model_coefficients[,4])
 
-pl_population = plot_significance(par = model_diag_results$population_TV)
+pl_population = plot_significance(par = model_diag_results$population_p_fb, coefficient = model_coefficients[,4])
+
+
+#Out of sample test
+set.seed("123780")
+
+gwr_data = joined_data %>% 
+  mutate(price = log(price))
+
+
+# Create data split
+## First, create training/testing split
+
+rf_split = createDataPartition(gwr_data$price,
+                               p = 0.8,
+)[[1]]
+
+apartment_train = gwr_data[rf_split,] %>% as_Spatial()
+apartment_test = gwr_data[-rf_split,] %>% as_Spatial()
+
+train_bw = bw.gwr(price ~ ., apartment_train, kernel = "exponential")
+
+gwr_predictions = gwr.predict(price ~ ., apartment_train, apartment_test, kernel = "exponential",
+                          bw = train_bw)
+
+root_mean = RMSE(gwr_predictions$SDF$prediction, apartment_test$price)
+mean_absolute = MAE(gwr_predictions$SDF$prediction, apartment_test$price)
+mean_squared = mean((gwr_predictions$SDF$prediction - apartment_test$price)^2)
+
+comparison_metrics_GWR = c(root_mean, mean_absolute, mean_squared)

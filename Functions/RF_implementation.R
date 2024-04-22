@@ -14,9 +14,9 @@ run_rf_model = function(data, rfGrid, folds = 5, ...){
   
   rf_train = train(
     x = (data %>% 
-           select(-logFMR_2) %>%
+           select(-price) %>%
            st_drop_geometry()),
-    y = data$logFMR_2,
+    y = data$price,
     trControl = rf_ctrl,
     tuneGrid = rfGrid,
     method = "rf"

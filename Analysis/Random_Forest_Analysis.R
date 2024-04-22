@@ -1,12 +1,3 @@
----
-title: "Random_Forest_FMR"
-format: pdf
-editor: visual
----
-
-## FMR RF Analysis
-
-```{r}
 #Load
 library(tidyverse)
 library(foreach)
@@ -15,25 +6,26 @@ library(doRNG)
 library(sf)
 library(tigris)
 library(caret)
-
-load("../Data/FMR_shape_data.Rdata")
 set.seed("123780")
+
+load("../Data/100k_shape_data.Rdata")
 
 #Turn multipolygon into centroid of each county for purpose of passing
 #latitude and longitude into the random forest model to account for spatial effects
-random_f_data = fmr_data %>% 
+random_f_data = joined_data %>% 
   mutate(geometry = st_centroid(geometry)) %>% 
   mutate(longitude = st_coordinates(geometry)[,1], 
-         latitude = st_coordinates(geometry)[,2]) %>% 
+         latitude = st_coordinates(geometry)[,2],
+         price = log(price)) %>% 
   st_drop_geometry()
 
 
 # Create data split
 ## First, create training/testing split
 
-rf_split = createDataPartition(random_f_data$logFMR_2,
-                                       p = 0.8,
-                                       )[[1]]
+rf_split = createDataPartition(random_f_data$price,
+                               p = 0.8,
+)[[1]]
 
 apartment_train = random_f_data[rf_split,]
 apartment_test = random_f_data[-rf_split,]
@@ -41,11 +33,7 @@ apartment_test = random_f_data[-rf_split,]
 # Set up parallel training
 compute_cluster = makeCluster(10)
 registerDoParallel(compute_cluster)
-```
 
-You can add options to executable code like this
-
-```{r}
 
 ####### Random Forest #########
 source("../Functions/RF_implementation.R")
@@ -66,30 +54,6 @@ root_mean = RMSE(model_predictions, apartment_test$price)
 mean_absolute = MAE(model_predictions, apartment_test$price)
 mean_squared = mean((model_predictions - apartment_test$price)^2)
 
-comparison_metrics = c(root_mean, mean_absolute, mean_squared)
-
-
-```
-
-```{r}
-#run rf with full dataset
-full_random_f_model = run_rf_model(random_f_data, rfGrid)
-
-full_model_predictions = rf_prediction(full_random_f_model, random_f_data)
-
-#add predictions to dataset
-fmr_data$predictions = full_model_predictions
+comparison_metrics_RF = c(root_mean, mean_absolute, mean_squared)
 
 stopCluster(compute_cluster)
-
-```
-
-```{r}
-#plotting fitted values
-plotting_rf_predicted(fmr_data)
-```
-
-```{r}
-#plotting residuals
-plotting_rf_residuals(fmr_data)
-```

@@ -1,5 +1,3 @@
-imports
-```{r}
 library(tidyverse)
 library(foreach)
 library(doParallel)
@@ -8,30 +6,43 @@ library(microbenchmark)
 library(sf)
 library(tigris)
 library(caret)
-set.seed("123780")
-```
 
-Setting up XGB model
-```{r}
 ##same as the RF model but with XGB
+load("../Data/100k_shape_data.Rdata")
 joined_data2 = joined_data %>% 
   mutate(geometry = st_centroid(geometry)) %>% 
   mutate(longitude = st_coordinates(geometry)[,1], 
-         latitude = st_coordinates(geometry)[,2]) %>% 
+         latitude = st_coordinates(geometry)[,2],
+         price = log(price)) %>% 
   st_drop_geometry()
 
 data = as.data.frame(joined_data2)
 data_split = createDataPartition(data$price,
-                                       p = 0.8,
-                                       list = FALSE)
+                                 p = 0.8,
+                                 list = FALSE)
+data_train = as.data.frame(data[data_split,])
+data_test = as.data.frame(data[-data_split,])
+
+##same as the RF model but with XGB
+load("../Data/100k_shape_data.Rdata")
+joined_data2 = joined_data %>% 
+  mutate(geometry = st_centroid(geometry)) %>% 
+  mutate(longitude = st_coordinates(geometry)[,1], 
+         latitude = st_coordinates(geometry)[,2],
+         price = log(price)) %>% 
+  st_drop_geometry()
+
+data = as.data.frame(joined_data2)
+data_split = createDataPartition(data$price,
+                                 p = 0.8,
+                                 list = FALSE)
 data_train = as.data.frame(data[data_split,])
 data_test = as.data.frame(data[-data_split,])
 
 
-```
 
-Training Model
-```{r}
+#Training Model
+
 source("../Functions/XGBoost_implementation.R")
 compute_cluster = makeCluster(8)
 registerDoParallel(compute_cluster)
@@ -55,30 +66,6 @@ root_mean = RMSE(xgb_sacr_pred, data_test$price)
 mean_absolute = MAE(xgb_sacr_pred, data_test$price)
 mean_squared = mean((xgb_sacr_pred - data_test$price)^2)
 
-comparison_metrics = c(root_mean, mean_absolute, mean_squared)
+comparison_metrics_xgboost = c(root_mean, mean_absolute, mean_squared)
 
 stopCluster(compute_cluster)
-```
-Full Model and Plots
-```{r}
-compute_cluster = makeCluster(8)
-registerDoParallel(compute_cluster)
-full_xgb_model = run_XGB_model(data = data, xgbGrid = xgbGrid)
-
-full_xgb_pred = xgb_prediction(model = full_xgb_model, test_data = data)
-joined_data$predictions = full_xgb_pred
-
-stopCluster(compute_cluster)
-```
-
-```{r}
-plotting_xgb_predicted(joined_data, full_xgb_pred)
-```
-
-```{r}
-plotting_xgb_resids(joined_data, full_xgb_pred)
-```
-The model works phenominally with there being almost no residuals that are above 1000. This is a great model to use for the data. 
-
-
-
