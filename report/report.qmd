@@ -99,9 +99,9 @@ ggplot(voronoi_polys)+
                                 alpha = 0.1))+
   scale_fill_viridis_c(name = "Coefficient Value")+
   theme_bw()
-ggsave("Sim_coefficients.png", path = "./report_files/figure-pdf")
+ggsave("Sim_coefficients.png", path = "./report_images/figure-pdf")
 ```
-![Plot of simulated bathroom coefficients](./report_files/figure-pdf/Sim_coefficients.png)
+![Plot of simulated bathroom coefficients](./report_images/figure-pdf/Sim_coefficients.png)
   To simulate observations from this data we used three different distributions. For number of bathrooms and bedrooms we sampled from a poission distribution with a lambda parameter of 1 and then added 1 to the value. This gave us a vector of values that had a minimum of 1 with a maximum of 6 and 7 for bathrooms and bedrooms respectively. This is about the range of values that we observed in our real dataset. For square footage we sampled from a normal distribution with mean 500 and standard deviation of 60 and this was also on the same scale as our data. For population observatins we sampled from a beta distribution with scale parameters of 0.2 and 0.9 scaled by 1000000. This gave us a skewed distribution very similar to population values in the United States with most counties having very low populations and a select few having extremely high populations. The generated values can be seen here in \cref{fig-simul}. 
 
   Another reason for choosing GWR is due to knowing from Fuss and Koller that there will be a spatial structure in our model that needs to be accounted for [@fuss_role_2016]. We also want a statistical model that can give us interpretable coefficients for our covariates. This is what led us to adopting GWR over algorithmic models that may have better predictive power. We address algorithmic models below as a comparison test.
@@ -126,12 +126,12 @@ ggplot(voronoi_polys)+
                                 alpha = 0.1))+
   scale_fill_viridis_c(name = "Absolute Error")+
   ggtitle(label = "Absolute Error of Price")
-ggsave("Mae_simulation.png", path = "./report_files/figure-pdf")
+ggsave("Mae_simulation.png", path = "./report_images/figure-pdf")
 
 ```
 \begin{figure}
   \centering
-  \includegraphics{./report_files/figure-pdf/Mae_simulation.png}
+  \includegraphics{./report_images/figure-pdf/Mae_simulation.png}
   \caption{Lack of spatial trend in the errors showing much of the spatial variance has been captured}
   \label{fig:mae}
 \end{figure}
@@ -166,7 +166,7 @@ pl_4 = ggplot(voronoi_polys)+
   scale_fill_viridis_c()
 
 ggarrange(pl_1,pl_2,pl_3,pl_4, common.legend = TRUE, labels = c("Sq_ft","Pop","Bed","Bath"))
-ggsave("Coefficients.png", path = "./report_files/figure-pdf")
+ggsave("Coefficients.png", path = "./report_images/figure-pdf")
 
 ```
   The coefficients seemed to be accurately estimated by the GWR model as can be seen in \cref{fig:coefficients} showing the difference between the true value of the coefficient and its estimated value. Seeing that this model is valid we proceeded to use it on our real data.
@@ -174,7 +174,7 @@ ggsave("Coefficients.png", path = "./report_files/figure-pdf")
 ```(=tex)
 \begin{figure}[ht]
   \centering
-  \includegraphics{./report_files/figure-pdf/Coefficients.png}
+  \includegraphics{./report_images/figure-pdf/Coefficients.png}
   \caption{Difference between true value and estimated value for each coefficient}
   \label{fig:coefficients}
 \end{figure}
@@ -189,11 +189,11 @@ ggplot(model_results)+
                                 alpha = 0.1))+
   scale_fill_gradientn(colors = terrain.colors(8),name = "Log(Price)")+
   ggtitle(label = "Predicted log(price) using Exponential kernel")
-ggsave("Predictive_surface.png", path = "./report_files/figure-pdf")
+ggsave("Predictive_surface.png", path = "./report_images/figure-pdf")
 ```
 \begin{figure}
 \centering
-\includegraphics{./report_files/figure-pdf/Predictive_surface.png}
+\includegraphics{./report_images/figure-pdf/Predictive_surface.png}
 \caption{High points on the coasts and in Colorado}
 \label{fig:pred_surface}
 \end{figure}
@@ -207,11 +207,11 @@ ggplot(model_results)+
                                 alpha = 0.1))+
   scale_fill_viridis_c(name = "Difference in $")+
   ggtitle(label = "Predicted log(price) using Exponential kernel")
-ggsave("Difference_surface.png", path = "./report_files/figure-pdf")
+ggsave("Difference_surface.png", path = "./report_images/figure-pdf")
 ```
 \begin{figure}
 \centering
-\includegraphics{./report_files/figure-pdf/Difference_surface.png}
+\includegraphics{./report_images/figure-pdf/Difference_surface.png}
 \caption{}
 \label{fig:Diff_surface}
 \end{figure}
