@@ -17,8 +17,8 @@ run_XGB_model = function(data, xgbGrid, folds = 5, ...){
     
     xgboost_train = train(
       x = data_train %>% 
-        select(!logFMR_2),   
-      y = data_train$logFMR_2,
+        select(!price),   
+      y = data_train$price,
       trControl = data_ctrl,
       tuneGrid = xgbGrid,
       method = "xgbTree",
@@ -31,7 +31,7 @@ run_XGB_model = function(data, xgbGrid, folds = 5, ...){
 
 xgb_prediction = function(model, test_data){
   xgb_sacr_pred = test_data %>% 
-    select(!logFMR_2) %>% 
+    select(!price) %>% 
     predict(model, .)
   return(xgb_sacr_pred)
 }

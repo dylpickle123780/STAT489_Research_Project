@@ -20,10 +20,10 @@ voronoi_polys = st_sample(square_bound, number_polys) %>%
 #Generating data 
 
 #each bedroom will increase rent by anywhere from 300 to 600
-beta_bedrooms = sin(3*voronoi_polys$center[,1]+3*voronoi_polys$center[,2])
-beta_bathrooms = cos(5*voronoi_polys$center[,1])+cos(3*voronoi_polys$center[,2])
-beta_square_footage = tan(1/2*voronoi_polys$center[,1]+1/2*voronoi_polys$center[,2])
-beta_population = cos(3*voronoi_polys$center[,1])+sin(5*voronoi_polys$center[,2])
+beta_bedrooms = (sin(3*voronoi_polys$center[,1]+3*voronoi_polys$center[,2])+1)*60
+beta_bathrooms = (cos(5*voronoi_polys$center[,1])+cos(3*voronoi_polys$center[,2])+2)*60
+beta_square_footage = (tan(1/2*voronoi_polys$center[,1]+1/2*voronoi_polys$center[,2])+1)/1000
+beta_population = (cos(3*voronoi_polys$center[,1])+sin(5*voronoi_polys$center[,2])+2)/100000
 
 voronoi_polys = voronoi_polys[,1]
 
@@ -80,3 +80,5 @@ simulation_results = simulation_results%>%
 MAE_simulation = mean(abs(simulation_results$residual))
 MSE_simulation = mean(simulation_results$residual^2)
 RMSE_simulation = sqrt(mean(simulation_results$residual^2))
+
+
