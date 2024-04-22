@@ -1,0 +1,86 @@
+---
+title: "GWR_FMR"
+format: pdf
+editor: visual
+---
+
+## GWR of FMR
+
+```{r}
+#Load
+library(GWmodel)
+library(tidyverse)
+library(sf)
+library(sp)
+library(ggfortify)
+library(foreach)
+library(doParallel)
+library(doRNG)
+library(microbenchmark)
+library(tigris)
+library(caret)
+load("../Data/FMR_shape_data.Rdata")
+
+#Turning to spatial
+fmr_data = fmr_data %>%
+  select(logFMR_0,logFMR_1,logFMR_2,logFMR_3,logFMR_4, logPop2020)
+
+model_data = fmr_data %>%
+  as_Spatial()
+
+#Selecting Bandwidth
+model_bandwidth = bw.gwr(model_data$logFMR_2 ~ ., data = model_data,
+                         kernel = "exponential", parallel.method = "omp")
+
+#run model with calculated bandwidth and return model
+model_gwr = gwr.basic(model_data$logFMR_2 ~ ., data = model_data,
+                      bw = model_bandwidth, kernel = "exponential", 
+                      parallel.method = "omp")
+```
+
+```{r}
+#Source in functions for plotting
+source("../Functions/GWR_implementation.R")
+
+plotting_GWR_predicted(model_gwr)
+```
+
+```{r}
+plotting_GWR_residuals(model_gwr)
+```
+
+```{r}
+#creating training split and predictions for gwr
+set.seed("123780")
+
+gwr_split = createDataPartition(fmr_data$logFMR_2,
+                                       p = 0.8,
+                                       )[[1]]
+
+apartment_train = fmr_data[gwr_split,]
+apartment_test = fmr_data[-gwr_split,]
+
+#Turning to spatial
+model_data = apartment_train %>% 
+  as_Spatial()
+
+test_data = apartment_test %>% 
+  as_Spatial()
+#Selecting Bandwidth
+model_bandwidth = bw.gwr(model_data$logFMR_2 ~ ., data = model_data,
+                         kernel = "exponential", parallel.method = "omp")
+
+#run model with calculated bandwidth and return model
+model_gwr = gwr.basic(model_data$logFMR_2 ~ ., data = model_data,
+                      bw = model_bandwidth, kernel = "exponential", 
+                      parallel.method = "omp")
+
+gwr_predictions = gwr.predict(model_data$logFMR_2 ~ ., model_data, test_data, 
+            model_bandwidth, kernel = "exponential")
+
+gwr_rmse = RMSE(gwr_predictions$SDF$prediction, test_data$logFMR_2)
+gwr_mae = MAE(gwr_predictions$SDF$prediction, test_data$logFMR_2)
+gwr_mse = mean((gwr_predictions$SDF$prediction - test_data$logFMR_2)^2)
+
+gwr_comparison_metrics = c(gwr_rmse, gwr_mae, gwr_mse)
+```
