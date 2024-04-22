@@ -45,7 +45,7 @@ bibliography: 489_SP24_Group2.bib
   
   The United States is infamous for its housing unaffordability crisis with over half of American Renters unable to afford rent according to the Joint Center for Housing Studies at Harvard University (Harvard 2023). However, with the government allocating 72.6 Billion dollars to be spent in 2025 for the Department of Housing and Urban Development with an additional 185 billion dollars to be spent to solve the housing crisis over the next ten years, there has to be a way to allocate the funds to maximize people being able to afford their rent (HUD Budget 2023). 
   
-      Show a stat where places like NYC and LA are dealing with homelessness problems and our unaffordability statistic is showing that these places are the most unfair. 
+    Show a stat where places like NYC and LA are dealing with homelessness problems and our unaffordability statistic is showing that these places are the most unfair. 
 
   If people are housed they are less likely to do XYZ thing. 
 
@@ -90,10 +90,13 @@ set.seed("123780")
   Geographically weighted regression (GWR) is a method of accounting for spatially varying covariates in a linear regression model [@brunsdon_geographically_1998]. The assumptions of geographically weighted regression are very similar to that of a simple weighted least squares model where the weights are calculated using some kernel function. One key difference is that the weight matrix is calculated for each observation rather than a fixed global weight matrix. Since one aspect of GWR is that coefficients vary smoothly over the space, observations closer to each other will have a greater influence on each other. Since calculating and inverting this matrix for each observation against all the other observations would be computationally problematic, a bandwidth parameter is introduced. This allows the weight matrix to only take into account all obervations within the range of the bandwidth. 
 
   To verify that GWR was an appropriate choice for our data we performed a simulation study that utilized voronoi tessellation to create an artificial spatial area. We created an area of 500 polygons to simulate data from. We modeled coefficients by generating sequences that utilized both the x and y coordinates to form a smooth spatially varying set of coefficients. Each of the coefficients used some linear combination of cos, sin, and tan to generate spatially varying coefficients as can be seen below.
+  
 ```{r simulation, message=FALSE, results = "hide",cache = TRUE, warning=FALSE, output = FALSE}
 source("../Simulation/GWR_simulation.R")
 ggplot(voronoi_polys)+
-  geom_sf(aes(fill = beta_bathrooms))+
+  geom_sf(aes(fill = beta_bathrooms),
+                  color = scales::alpha("black",
+                                alpha = 0.1))+
   scale_fill_viridis_c(name = "Coefficient Value")+
   theme_bw()
 ggsave("Sim_coefficients.png", path = "./report_files/figure-pdf")
@@ -118,7 +121,9 @@ ggsave("Sim_coefficients.png", path = "./report_files/figure-pdf")
   Our simulation study resulted in a model that had residuals with no spatial correlation as can be seen in \cref{fig:mae} below. The MAE for the model was `r round(mean(abs(simulation_results$residual)),2)`. Given that the average price in this data set was `r round(mean(voronoi_polys$price),2)` this gives us a relative percent error of `r round(MAE_simulation/mean(voronoi_polys$price)*100,2)`%. This model also had an estimated $R^2$ value of `r round(simulation_model_gwr$GW.diagnostic$gwR2.adj,4)` showing that it was very good at explaining the variability in our simulated data. 
 ```{r absolute_error, message=FALSE, results = "hide", cache=TRUE, warning=FALSE, output = FALSE}
 ggplot(voronoi_polys)+
-  geom_sf(aes(fill = abs(simulation_results$residual)))+
+  geom_sf(aes(fill = abs(simulation_results$residual)),
+                    color = scales::alpha("black",
+                                alpha = 0.1))+
   scale_fill_viridis_c(name = "Absolute Error")+
   ggtitle(label = "Absolute Error of Price")
 ggsave("Mae_simulation.png", path = "./report_files/figure-pdf")
@@ -137,19 +142,27 @@ library(tidyverse)
 library(ggpubr)
 
 pl_1 = ggplot(voronoi_polys)+
-  geom_sf(aes(fill = simulation_results$footage_val - square_footage))+
+  geom_sf(aes(fill = simulation_results$footage_val - square_footage),
+                    color = scales::alpha("black",
+                                alpha = 0.1))+
   scale_fill_viridis_c(name = "Coefficient Differences")
 
 pl_2 = ggplot(voronoi_polys)+
-  geom_sf(aes(fill = simulation_results$population_val - population))+
+  geom_sf(aes(fill = simulation_results$population_val - population),
+                    color = scales::alpha("black",
+                                alpha = 0.1))+
   scale_fill_viridis_c()
 
 pl_3 = ggplot(voronoi_polys)+
-  geom_sf(aes(fill = simulation_results$bed_val - bedrooms))+
+  geom_sf(aes(fill = simulation_results$bed_val - bedrooms),
+                    color = scales::alpha("black",
+                                alpha = 0.1))+
   scale_fill_viridis_c()
 
 pl_4 = ggplot(voronoi_polys)+
-  geom_sf(aes(fill = simulation_results$bath_val - bathrooms))+
+  geom_sf(aes(fill = simulation_results$bath_val - bathrooms),
+                    color = scales::alpha("black",
+                                alpha = 0.1))+
   scale_fill_viridis_c()
 
 ggarrange(pl_1,pl_2,pl_3,pl_4, common.legend = TRUE, labels = c("Sq_ft","Pop","Bed","Bath"))
@@ -158,18 +171,22 @@ ggsave("Coefficients.png", path = "./report_files/figure-pdf")
 ```
   The coefficients seemed to be accurately estimated by the GWR model as can be seen in \cref{fig:coefficients} showing the difference between the true value of the coefficient and its estimated value. Seeing that this model is valid we proceeded to use it on our real data.
 
-\begin{figure}
+```(=tex)
+\begin{figure}[ht]
   \centering
   \includegraphics{./report_files/figure-pdf/Coefficients.png}
   \caption{Difference between true value and estimated value for each coefficient}
   \label{fig:coefficients}
 \end{figure}
+```
 
   Using the real data and predicting at every county we were able to find a predictive surface that showed rent pricing on a log scale as a function of space \cref{fig:pred_surface}. For the prediction we used the median of bathrooms and bedrooms and the mean of population, square footage, and count to hold all covariates constant. 
 ```{r, message=FALSE, results = "hide", cache=TRUE, warning=FALSE, output = FALSE}
 source("../Analysis/GWR_Project.R")
 ggplot(model_results)+
-  geom_sf(aes(fill = prediction))+
+  geom_sf(aes(fill = prediction),
+                    color = scales::alpha("black",
+                                alpha = 0.1))+
   scale_fill_gradientn(colors = terrain.colors(8),name = "Log(Price)")+
   ggtitle(label = "Predicted log(price) using Exponential kernel")
 ggsave("Predictive_surface.png", path = "./report_files/figure-pdf")
@@ -185,7 +202,9 @@ ggsave("Predictive_surface.png", path = "./report_files/figure-pdf")
 ```{r, message=FALSE, results = "hide", cache=TRUE, warning=FALSE, output = FALSE}
 library(ggplot2)
 ggplot(model_results)+
-  geom_sf(aes(fill = re_scale_diff), name = "Price difference")+
+  geom_sf(aes(fill = re_scale_diff), name = "Price difference",
+                    color = scales::alpha("black",
+                                alpha = 0.1))+
   scale_fill_viridis_c(name = "Difference in $")+
   ggtitle(label = "Predicted log(price) using Exponential kernel")
 ggsave("Difference_surface.png", path = "./report_files/figure-pdf")
@@ -232,7 +251,6 @@ kable(data) %>%
   We also have to be considerate of our high p values which would require further investigation, however according the Fuss and Koller we know that housing prices are spacially variate so to account for spatial covariates in the linear model a spatial model is used to show the effects of space on the price even if it is not the most accurate according to our Monte-Carlo Test.[@fuss_role_2016]. Improvements have to made to the model for it to be truly be valid such as adding more covariates that have to do with the geography, weather, and other natural occurrences to improve upon the validity of the spatial model. Although, the model is not perfect it does capture the spatial covariate of population and its impact on housing prices which shows some promise. 
 
 
-
 # Appendix
 
 ```{r hist-trans}
@@ -268,3 +286,7 @@ hist(population_i, main = "Population", xlab = "Population")
 
 ```
 
+# References
+
+::: {#refs}
+:::
