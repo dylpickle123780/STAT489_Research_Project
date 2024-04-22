@@ -12,6 +12,7 @@ load("../Data/100k_shape_data.Rdata")
 #Turning to spatial
 model_data = joined_data %>% 
   mutate(price = log(price))%>% 
+  mutate(square_feet = log(square_feet), population = log(population)) %>% 
   st_transform(4326) %>% 
   as_Spatial() 
 

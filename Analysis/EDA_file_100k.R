@@ -20,6 +20,7 @@ apartments_100k_cleaned <- apartments_100k %>%
   mutate(price = as.numeric(price), latitude = as.numeric(latitude), longitude = as.numeric(longitude),
          state = as.factor(state), bathrooms = as.numeric(bathrooms), bedrooms = as.numeric(bedrooms),
          square_feet = as.numeric(square_feet)) %>% 
+  distinct() %>% 
   filter(price<10000)
 
 
