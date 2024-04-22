@@ -217,8 +217,10 @@ kable(data) %>%
 
 
 # Discussion
-  We found that in (select locations and POIs later) probably going to be Denver, Dallas, and College Station. There is an unexpected difference between these urban areas and their surrounding counties. We theorize it is because of (discuss reason here). These policies and geographic constraints lead to the results we are seeing in these areas. 
-
+  As expected the urban coasts are far more unfair compared to the FMR data. This is because of the high demand for housing in these areas and the lack of supply. This leads to a higher price than what the FMR data would suggest. This is to be expected though as it is always seen in the news that their is a housing crisis in these areas. However when we see that the model actually struggles to capture the prices in these areas because our model holds all the covariates at a constant weight, but the price is actually being driven up by the density of people in these areas, and housing policies within the coastal states. We can actually see the delta return to normal as we exit the North Eastern corridor.
+  We can concur that these discrepancies are occurring because of policies enacted in some of these states that can restrict the supply of housing. Policies like rent control, zoning laws, and building codes can all restrict the supply of housing in these areas. (Glaeser 2003) This is especially prevalent in places like Manhattan which is infamous for having 
+  
+  
   When we see why these results are occurring we can look to the covariates of Bedroom, Bathroom, and SQFT which come from the 100k Dataset to see what is causing these differences
 
   We also have to be considerate of our high p values which are unnaturally high because of the log transform. Once we transformed it back to raw prices the p values drop dramatically. 
