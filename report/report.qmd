@@ -43,18 +43,23 @@ bibliography: 489_SP24_Group2.bib
   
 # Introduction {#sec-intro}
   
-  The United States is infamous for its housing unaffordability crisis with over half of American Renters unable to afford rent according to the Joint Center for Housing Studies at Harvard University (Harvard 23). However, with the government allocating 72.6 Billion dollars to be spent in 2025 for the Department of Housing and Urban Development with an additional 185 billion dollars to be spent to solve the housing crisis over the next ten years, there has to be a way to allocate the funds to maximize people being able to afford their rent (HUD Budget 23). 
+  The United States is infamous for its housing unaffordability crisis with over half of American Renters unable to afford rent according to the Joint Center for Housing Studies at Harvard University (Harvard 2023). However, with the government allocating 72.6 Billion dollars to be spent in 2025 for the Department of Housing and Urban Development with an additional 185 billion dollars to be spent to solve the housing crisis over the next ten years, there has to be a way to allocate the funds to maximize people being able to afford their rent (HUD Budget 2023). 
+  
+      Show a stat where places like NYC and LA are dealing with homelessness problems and our unaffordability statistic is showing that these places are the most unfair. 
 
-  We believe that the Fair Market Rent system (FMR) that the government is using can be improved upon to incorporate live housing stock data to make better inferences on where in the United States housing unaffordability is. We think that this is the case because the FMR system is based on economic factors that do not take into account the actual market rent in a given area. However, housing prices are influenced by factors other than economic factors such as location, amenities, and the overall desirability of the area. (Campbell 09). 
+  If people are housed they are less likely to do XYZ thing. 
 
-  Currently, the Fair Market Rent system relies on a multitude of indicators which mainly includes economic factors like household wealth and GDP per capita within counties to find a 40th percentile price for what can be affordable housing for 60% of the population within a certain area. This system will then allocate housing units at those determined prices to push down the price of rent in those markets or allow for vouchers to be used to live in those areas. The main issue that is found is that market rent can vary wildly from year to year for reasons other than the economic well being of the community (FMR Survey 23). 
+  Show how urban housing can lead to better outcomes in places like Europe which have good urban housing policies and thus less crime.
+
+  Introduction to FMR and how it is used to allocate housing vouchers and how it is used to determine where housing is affordable.
+  
+  We believe that the Fair Market Rent system (FMR) that the government is using can be improved upon to incorporate live housing stock data to make better inferences on where in the United States housing unaffordability is. We think that this is the case because the FMR system is based on economic factors that do not take into account the actual market rent in a given area. However, housing prices are influenced by factors other than economic factors such as location, amenities, and the overall desirability of the area. (Campbell 2009). 
+
+  Currently, the Fair Market Rent system relies on a multitude of indicators which mainly includes economic factors like household wealth and GDP per capita within counties to find a 40th percentile price for what can be affordable housing for 60% of the population within a certain area. This system will then allocate housing units at those determined prices to push down the price of rent in those markets or allow for vouchers to be used to live in those areas. The main issue that is found is that market rent can vary wildly from year to year for reasons other than the economic well being of the community (FMR Survey 2023). 
 
   With this research, we aim to identify the gap between the the actual market rent and the FMR data provided by the government to portray an accurate picture of the real estate market and see what parts of the market are actually affordable and what parts are not. We also will attempt to discover how and why these price differences occur in these areas. 
-
-
-
-Thesis
-A metric that compares the difference between market rent and Fair Market Rent can capture more housing unaffordability data than either data set can do alone. 
+  
+  In all, we want to compare the difference between market rent and Fair Market Rent to capture more housing unaffordability data than either data set can do alone. 
 
 
 # Related Works
@@ -223,19 +228,11 @@ kable(data) %>%
   
   The north eastern coastline can be easily explained by the natural weight that New York City exhibits and their naturally high housing prices due to their population density. We can see this to be the case as the population covariate falls apart in these highly dense areas because they are anomalous to the rest of the United states, however as stated before the population metric is a good way to determine where housing prices are going to be high, and if the model is holding all other covariates constant then the population metric breaking down in these areas is to be expected. 
   
-  When it comes to the midwest and the south we can see that the model is actually doing a good job of capturing the prices in these areas. This is because the model is holding all the covariates constant and the prices in these areas are actually being driven by the covariates that we are holding constant. This is a good sign that the model is actually doing a good job of capturing the prices in these areas, however we do see a rise in prices in Colorado. When further research is applied to why this discrepancy exists we see that it has alot to do with the policy measures in the area, however it is a different case than the urban coasts. In Colorado we see that the prices are being driven up by property taxes as well as zoning laws like the other areas(Mueller 2023). We can also concur that the geography of the area is also playing a role in the price of housing in the area. The mountainous terrain of Colorado is a natural barrier to building and this is driving up the price of housing in the area. That does not excuse the policy that is present but it is an additional parameter that is not captured by our model that we can do further research into in the future. 
+  When it comes to the midwest and the south we can see that the model is actually doing a good job of capturing the prices in these areas. This is because the model is holding all the covariates constant and the prices in these areas are actually being driven by the covariates that we are holding constant. This is a good sign that the model is actually doing a good job of capturing the prices in these areas, however we do see a rise in prices in Colorado. When further research is applied to why this discrepancy exists we see that it has a lot to do with the policy measures in the area, however it is a different case than the urban coasts. In Colorado we see that the prices are being driven up by property taxes as well as zoning laws like the other areas (Mueller 2023). We can also concur that the geography of the area is also playing a role in the price of housing in the area. The mountainous terrain of Colorado is a natural barrier to building and this is driving up the price of housing in the area. That does not excuse the policy that is present but it is an additional parameter that is not captured by our model that we can do further research into in the future. 
   
-  We also have to be considerate of our high p values which are unnaturally high because of the log transform. Once we transformed it back to raw prices the p values drop dramatically. 
+  We also have to be considerate of our high p values which would require further investigation, however according the Fuss and Koller we know that housing prices are spacially variate so to account for spatial covariates in the linear model a spatial model is used to show the effects of space on the price even if it is not the most accurate according to our Monte-Carlo Test.[@fuss_role_2016]. Improvements have to made to the model for it to be truly be valid such as adding more covariates that have to do with the geography, weather, and other natural occurrences to improve upon the validity of the spatial model. Although, the model is not perfect it does capture the spatial covariate of population and its impact on housing prices which shows some promise. 
 
-  As expected though the urban coasts are far more unfair compared to the FMR data.
 
-  We can use the metric to assess where in the US is deemed unfair. We can also see where funding can be reallocated from areas where the housing costs are lower than the FMR value.
-
-  Show a stat where places like NYC and LA are dealing with homelessness problems and our unaffordability statistic is showing that these places are the most unfair. 
-
-  If people are housed they are less likely to do XYZ thing. 
-
-  Show how urban housing can lead to better outcomes in places like Europe which have good urban housing policies and thus less crime.
 
 # Appendix
 
