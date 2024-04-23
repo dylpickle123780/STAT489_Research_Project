@@ -45,9 +45,7 @@ bibliography: 489_SP24_Group2.bib
   
   The United States is infamous for its housing unaffordability crisis with over half of American Renters unable to afford rent according to the Joint Center for Housing Studies at Harvard University (Harvard 2023). However, with the government allocating 72.6 Billion dollars to be spent in 2025 for the Department of Housing and Urban Development with an additional 185 billion dollars to be spent to solve the housing crisis over the next ten years, there has to be a way to allocate the funds to maximize people being able to afford their rent (HUD Budget 2023). 
   
-    Show a stat where places like NYC and LA are dealing with homelessness problems and our unaffordability statistic is showing that these places are the most unfair. 
-
-  If people are housed they are less likely to do XYZ thing. 
+  Within the news cycles, it is common to hear about the housing crisis especially within places like New York City and the western coast of the United States. With the government spending billions to tackle the issues of housing unaffordability, it is important to know where the money should be spent to maximize the number of people who can afford their rent. When renters are able to afford their rent, it can lead to outcomes like a reduction in intergenerational poverty which only improves the overall well being of the country.(Calabrese, Beadles, French-Fuller 2021)
 
   Show how urban housing can lead to better outcomes in places like Europe which have good urban housing policies and thus less crime.
 
