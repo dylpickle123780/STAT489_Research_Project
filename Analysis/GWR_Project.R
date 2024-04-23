@@ -11,8 +11,7 @@ load("../Data/100k_shape_data.Rdata")
 
 #Turning to spatial
 model_data = joined_data %>% 
-  mutate(price = log(price))%>% 
-  mutate(square_feet = log(square_feet), population = log(population)) %>% 
+  mutate(price = log(price))%>%
   select(-Count) %>% 
   st_transform(4326) %>% 
   as_Spatial() 
@@ -30,7 +29,8 @@ model_coefficients = cbind(model_basic$SDF$bedrooms, model_basic$SDF$bathrooms,
                            model_basic$SDF$square_feet, model_basic$SDF$population)
 
 #multicollinearity diagnostics
-multicollin_diagnostic = gwr.collin.diagno(price ~ bedrooms + bathrooms + square_feet + population, data = model_data, kernel = "exponential",
+multicollin_diagnostic = gwr.collin.diagno(price ~ bedrooms + bathrooms + square_feet + population, data = model_data, 
+                                           kernel = "exponential",
                                            bw = model_bandwidth)
 
 model_adjusted = gwr.t.adjust(model_basic)
@@ -52,8 +52,8 @@ test_data = counties()%>%
   select(geometry,POPESTIMATE2019)%>% 
   mutate(bedrooms = median(model_data$bedrooms),
          bathrooms = median(model_data$bathrooms),
-         square_feet = log(mean(model_data$square_feet)),
-         POPESTIMATE2019 = log(mean(model_data$population))) %>%
+         square_feet = mean(model_data$square_feet),
+         POPESTIMATE2019 = mean(model_data$population)) %>%
   rename(population = POPESTIMATE2019) %>% 
   as_Spatial()
 
@@ -108,26 +108,33 @@ library(hexbin)
 
 #coefficient plots
 pl_1 = ggplot(model_results)+
-  geom_sf(aes(fill = bedrooms_coef))+
+  geom_sf(aes(fill = bedrooms_coef),
+          color = scales::alpha("black",
+                                alpha = 0.1),
+          name = "Coefficient values")+
   scale_fill_viridis_c(option = "magma")
 
 pl_2 = ggplot(model_results)+
-  geom_sf(aes(fill = bathrooms_coef))+
+  geom_sf(aes(fill = bathrooms_coef),
+          color = scales::alpha("black",
+                                alpha = 0.1))+
   scale_fill_viridis_c(option = "magma")
 
 pl_3 = ggplot(model_results)+
-  geom_sf(aes(fill = square_feet_coef))+
+  geom_sf(aes(fill = square_feet_coef),
+          color = scales::alpha("black",
+                                alpha = 0.1))+
   scale_fill_viridis_c(option = "magma")
 
-pl_5 = ggplot(model_results)+
-  geom_sf(aes(fill = population_coef))+
+pl_4 = ggplot(model_results)+
+  geom_sf(aes(fill = population_coef),
+          color = scales::alpha("black",
+                                alpha = 0.1))+
   scale_fill_viridis_c(option = "magma")
 
 #Significance tests for nonstationarity 
 significance_test = gwr.montecarlo(price ~ ., data = model_data, kernel = "exponential", 
                bw =  model_bandwidth)
-
-print(model_basic)
 
 model_diag_results = model_adjusted$SDF %>% as("sf")
 
@@ -151,10 +158,7 @@ pl_population = plot_significance(par = model_diag_results$population_p_fb, coef
 set.seed("123780")
 
 gwr_data = joined_data %>% 
-  mutate(price = log(price),
-         square_feet = log(square_feet),
-         population = log(population)) %>% 
-  select(-Count)
+  mutate(price = log(price))
 
 
 # Create data split
@@ -169,11 +173,11 @@ apartment_test = gwr_data[-rf_split,] %>% as_Spatial()
 
 train_bw = bw.gwr(price ~ ., apartment_train, kernel = "exponential")
 
-gwr_predictions = gwr.predict(price ~ ., apartment_train, apartment_test, kernel = "exponential",
+gwr_predictions_out = gwr.predict(price ~ ., apartment_train, apartment_test, kernel = "exponential",
                           bw = train_bw)
 
-root_mean = RMSE(gwr_predictions$SDF$prediction, apartment_test$price)
-mean_absolute = MAE(gwr_predictions$SDF$prediction, apartment_test$price)
-mean_squared = mean((gwr_predictions$SDF$prediction - apartment_test$price)^2)
+root_mean = RMSE(gwr_predictions_out$SDF$prediction, apartment_test$price)
+mean_absolute = MAE(gwr_predictions_out$SDF$prediction, apartment_test$price)
+mean_squared = mean((gwr_predictions_out$SDF$prediction - apartment_test$price)^2)
 
 comparison_metrics_GWR = c(root_mean, mean_absolute, mean_squared)

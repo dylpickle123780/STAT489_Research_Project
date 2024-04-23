@@ -61,22 +61,20 @@ bibliography: 489_SP24_Group2.bib
 Random Forests are a method developed by Leo Breiman in 2001 that uses a collection of decision trees to make predictions on a dataset. The method is known for its high predictive power and its ability to handle large datasets with many features. It employs randomness by using a subset of the features at each split in the tree and a subset of the observations to build the trees. In the field of housing, Random Forests have been used to predict housing prices and to identify the most important features that influence housing prices. It was known to be apt at it due it's asymptotic variance being lower than other models like linear regression [@breiman_random_2001].
 
 
-Paper on Geographically weighted regression (Brundson et al). Explain how GWR came about and what it addressed about other models. Transition into housing. 
+Geographically weighted regression (GWR) is a method proposed by Brunsdon et al. for accounting for spatial nonstationarity [@brunsdon_geographically_1998]. GWR accounts for this nonstationarity by allowing the coefficients of the regression model to vary over geographic space. The method is similar to kernel regression except that the weighting is done using the latitude and longitude coordinates rather than the values of the predictors themselves. One of the many applications of this method that Brunsdon et al. propose themselves is on house prices. 
 
-Showing a need for accounting for spatial structure (Fuss). Discuss main results showing this need. Transition into similar problems addressing spatial structures.
+Fuss and Koller analyzed a residential market in Switzerland using five different linear models which each accounted for spatial nonstationarity in different ways [@fuss_role_2016]. Their models included varying levels of complexity up to a spatiotemporal autoregessive (STAR) model. In their findings they showed that every single model that accounted for spatial effects in some way had better in sample accuracy, out of sample accuracy, and forecasting accuracy. These findings show spatial structures need to be accounted for when dealing with housing price models. 
 
-Show Li using these methods to account for spatial structure on different problem (wind speed). Transition into modeling rent pricing.
+Ezebilo analyzed the affordability of rent prices in Papa New Guniea using ordinary least squares regression [@ezebilo_evaluation_2017]. They accounted for spatial effects by including dummy variables such as whether or not the observation was in a certain income area. While the model was significant, the $R^2$ value was low and the effects of variables were not allowed to vary spatially. We hope to account for this using GWR.  
 
-Ezebilo paper modeling rent and discuss limitations of model applied in paper (not allowing covariates to vary spatially). Transition into accounting for covariates varying spatially.
-
-Discuss McCord et al, Yoshida and Seya papers. All doing very similar things with GWR and algorithmic models so go into depth discussing similarities and differences from our own datasets and domain problem. Show what results came from these and how our application is different (location and scale).
+McCord et al. used a number of spatial models to analyze and predict rent pricing in the UK[@mccord_understanding_2014]. The study used OLS, spatial autoregression (SAR), conditional autoregression (CAR), and GWR. They found that among all of the models GWR performed significantly better in terms of the $R^@$ value and in terms of predictive accuracy. However the paper did not compare against any algorithmic models. Yoshida et al. compared between machine learning and regression approaches on rent pricing in Japan[@yoshida_spatial_2022]. They used OLS and a Gaussian process model and compared it to a random forest and an XGBoost model. They also used the deep neural network (DNN) model that was constructed by Seya et al as comparison [@seya_comparison_2021]. Their findings showed that the random forest models and XGBoost models performed best in terms of predictive accuracy on out of sample data. The gaussian process model performed similarly on smaller datasets but fell behind for larger magnitudes of data. Both of these papers analyzed areas that were much smaller than the scale of the United States. Our paper aims to use the best models of McCord et al. and Yoshida et al. in order to generate the best metric for analyzing pricing disparities in the United States.
 
 # Methods
 ```{r set-seed, echo=FALSE, warning=FALSE, message=FALSE}
 set.seed("123780")
 ```
 
-  We used data from the UCI Machine learning website that had an apartment dataset containing roughly 52,000 observations over the entire United States. We believe this to be a representative sample of the overall housing market as there was data from all 50 states with a wide and representative range of housing prices [@unknown_apartment_2019]. The observations in this dataset are from the 2018-2019 period. We only analyzed the contiguous United States and removed some observations that were missing data. The file also had some duplicate observations. This translated to removing ~4000 observations out of 52,000. From the histogram of price we decided to log transform the price to make it more normally distributed as can be seen in \cref{fig-transform}. We also decided to log transform both population and square footage for our models.
+  We used data from the UCI Machine learning website that had an apartment dataset containing roughly 52,000 observations over the entire United States. We believe this to be a representative sample of the overall housing market as there was data from all 50 states with a wide and representative range of housing prices [@unknown_apartment_2019]. The observations in this dataset are from the 2018-2019 period. We only analyzed the contiguous United States and removed some observations that were missing data. The file also had some duplicate observations. This translated to removing ~4000 observations out of 52,000. From the histogram of price we decided to log transform the price to make it more normally distributed as can be seen in \cref{fig-transform}.
 
   Next we decided that we would convert this point data into county level data. This allowed us to add population as a covariate. We decided to do this to also have the fair market data at the same level as the actual data. For number of bathrooms and bedrooms we took the median of all observations in the county and for square footage we took the mean square footage of the observations. Once aggregated into county level data we were left with roughly 1000 observations of counties out of the 3109 counties in the contiguous United States. 
 
@@ -97,7 +95,7 @@ ggplot(voronoi_polys)+
 ggsave("Sim_coefficients.png", path = "./report_images/figure-pdf")
 ```
 ![Plot of simulated bathroom coefficients](./report_images/figure-pdf/Sim_coefficients.png)
-  To simulate observations from this data we used three different distributions. For number of bathrooms and bedrooms we sampled from a poission distribution with a lambda parameter of 1 and then added 1 to the value. This gave us a vector of values that had a minimum of 1 with a maximum of 6 and 7 for bathrooms and bedrooms respectively. This is about the range of values that we observed in our real dataset. For square footage we sampled from a normal distribution with mean 500 and standard deviation of 60 and this was also on the same scale as our data. For population observatins we sampled from a beta distribution with scale parameters of 0.2 and 0.9 scaled by 1000000. This gave us a skewed distribution very similar to population values in the United States with most counties having very low populations and a select few having extremely high populations. The generated values can be seen here in \cref{fig-simul}. 
+  To simulate observations from this data we used three different distributions. For number of bathrooms and bedrooms we sampled from a poission distribution with a lambda parameter of 1 and then added 1 to the value. This gave us a vector of values that had a minimum of 1 with a maximum of 6 and 7 for bathrooms and bedrooms respectively. This is about the range of values that we observed in our real dataset. For square footage we sampled from a normal distribution with mean 500 and standard deviation of 60 and this was also on the same scale as our data. For population observations we sampled from a beta distribution with scale parameters of 0.2 and 0.9 scaled by 1000000. This gave us a skewed distribution very similar to population values in the United States with most counties having very low populations and a select few having extremely high populations. The generated values can be seen here in \cref{fig-simul}. 
 
   Another reason for choosing GWR is due to knowing from Fuss and Koller that there will be a spatial structure in our model that needs to be accounted for [@fuss_role_2016]. We also want a statistical model that can give us interpretable coefficients for our covariates. This is what led us to adopting GWR over algorithmic models that may have better predictive power. We address algorithmic models below as a comparison test.
 
@@ -136,31 +134,31 @@ ggsave("Mae_simulation.png", path = "./report_images/figure-pdf")
 library(tidyverse)
 library(ggpubr)
 
-pl_1 = ggplot(voronoi_polys)+
+simpl_1 = ggplot(voronoi_polys)+
   geom_sf(aes(fill = abs(simulation_results$footage_val - square_footage)),
                     color = scales::alpha("black",
                                 alpha = 0.1))+
   scale_fill_viridis_c(name = "Coefficient Differences")
 
-pl_2 = ggplot(voronoi_polys)+
+simpl_2 = ggplot(voronoi_polys)+
   geom_sf(aes(fill = abs(simulation_results$population_val - population)),
                     color = scales::alpha("black",
                                 alpha = 0.1))+
   scale_fill_viridis_c()
 
-pl_3 = ggplot(voronoi_polys)+
+simpl_3 = ggplot(voronoi_polys)+
   geom_sf(aes(fill = abs(simulation_results$bed_val - bedrooms)),
                     color = scales::alpha("black",
                                 alpha = 0.1))+
   scale_fill_viridis_c()
 
-pl_4 = ggplot(voronoi_polys)+
+simpl_4 = ggplot(voronoi_polys)+
   geom_sf(aes(fill = abs(simulation_results$bath_val - bathrooms)),
                     color = scales::alpha("black",
                                 alpha = 0.1))+
   scale_fill_viridis_c()
 
-ggarrange(pl_1,pl_2,pl_3,pl_4, common.legend = TRUE, labels = c("Sq_ft","Pop","Bed","Bath"))
+ggarrange(simpl_1,simpl_2,simpl_3,simpl_4, common.legend = TRUE, labels = c("Sq_ft","Pop","Bed","Bath"))
 ggsave("Coefficients.png", path = "./report_images/figure-pdf")
 
 ```
@@ -175,7 +173,7 @@ ggsave("Coefficients.png", path = "./report_images/figure-pdf")
 \end{figure}
 
 
-  Using the real data and predicting at every county we were able to find a predictive surface that showed rent pricing on a log scale as a function of space \cref{fig:pred_surface}. For the prediction we used the median of bathrooms and bedrooms and the mean of population, square footage, and count to hold all covariates constant. 
+  Using the real data and predicting at every county we were able to find a predictive surface that showed rent pricing on a log scale as a function of space \cref{fig:pred_surface}. For the prediction we used the median of bathrooms and bedrooms and the mean of population and square footage to hold all covariates constant. 
 ```{r, message=FALSE, results = "hide", cache=TRUE, warning=FALSE, output = FALSE}
 source("../Analysis/GWR_Project.R")
 ggplot(model_results)+
@@ -187,13 +185,13 @@ ggplot(model_results)+
 ggsave("Predictive_surface.png", path = "./report_images/figure-pdf")
 ```
 \begin{figure}[ht]
-\centering
-\includegraphics{./report_images/figure-pdf/Predictive_surface.png}
-\caption{High points on the coasts and in Colorado}
-\label{fig:pred_surface}
+  \centering
+  \includegraphics{./report_images/figure-pdf/Predictive_surface.png}
+  \caption{High points on the coasts and in Colorado}
+  \label{fig:pred_surface}
 \end{figure}
 
-  We then created the difference surface that was calculated by subtracting the prediction of the real data from the prediction of the fair market rent data. To get a surface that was on the same level as our original response of price we first transformed the real data prediction and fair market rent data back into the normal scale and then subtracted the two responses at each county. The result is a surface shown in \cref{fig:Diff_surface} that has peaks on the West Coast, New York, and Colorado. The peaks show up in very similar places 
+  We then created the difference surface that was calculated by subtracting the prediction of the real data from the prediction of the fair market rent data. To get a surface that was on the same level as our original response of price we first transformed the real data prediction and fair market rent data back into the normal scale and then subtracted the two responses at each county. The result is a surface shown in \cref{fig:Diff_surface} that has peaks on the West Coast, New York, and Colorado. The peaks show up in roughly the same places as the peaks of the apartment data. 
 ```{r, message=FALSE, results = "hide", cache=TRUE, warning=FALSE, output = FALSE}
 library(ggplot2)
 ggplot(model_results)+
@@ -205,17 +203,30 @@ ggplot(model_results)+
 ggsave("Difference_surface.png", path = "./report_images/figure-pdf")
 ```
 \begin{figure}[ht]
-\centering
-\includegraphics{./report_images/figure-pdf/Difference_surface.png}
-\caption{}
-\label{fig:Diff_surface}
+  \centering
+  \includegraphics{./report_images/figure-pdf/Difference_surface.png}
+  \caption{}
+  \label{fig:Diff_surface}
 \end{figure}
 
   We performed a test for multicollinearity and found that the average VIF value was `r mean(multicollin_diagnostic$VIF)` with a maximum value of `r max(multicollin_diagnostic$VIF)`. This levels indicate that in this dataset multicollinearity is not an issue that needs to be further investigated. We also ran a test for nonstationarity of all the coefficients used. 
-```{r nonstationarity}
+```{r nonstationarity, fig.align='center'}
 print(significance_test)
 ```
-  The high p-values are concerning and require further investigation. However, due to previous literature such as [@fuss_role_2016] we do know that there is a spatial pattern that needs to be accounted for. Further research into the nonstationarity of certain variables at scale should be investigated to conclusively support this. 
+  
+\
+  The high p-values are concerning and require further investigation. However, due to previous literature such as [@fuss_role_2016] we do know that there is a spatial pattern that needs to be accounted for. Further research into the nonstationarity of certain variables at scale should be investigated to conclusively support this. Once our predictive surface was created we also created surfaces of our predictor coefficients. \
+```{r, message=FALSE, results = "hide", cache=TRUE, warning=FALSE, output = FALSE}
+library(ggplot2)
+ggarrange(pl_1,pl_2,pl_3,pl_4, common.legend = TRUE, labels = c("Bed","Bath","Sq_ft","Pop"))
+ggsave("Coefficients_real_data.png", path = "./report_images/figure-pdf")
+```
+\begin{figure}[ht]
+\centering
+\includegraphics{./report_images/figure-pdf/Coefficients_real_data.png}
+\caption{}
+\label{fig:real_coef}
+\end{figure}
 
   We considered GWR, random forests, and XGBoost when choosing our models. The out of sample training split provided us with three different measures of predictive accuracy to compare. We used root mean squared error (RMSE), mean squared error (MSE), and mean absolute error (MAE) as the three metrics. From the table below random forest performed the best on out of sample training data in all 3 metrics. However random forest provides no interpretability of the coefficients used in our model. This leads us with less power in analyzing the effects of these covariates which is one of our goals when creating this predictive surface. The metrics of GWR while worse than the two algorithmic models were not too far behind and show that GWR is still a good choice. 
 ```{r comparison_metrics, message=FALSE, cache=TRUE, warning=FALSE}
@@ -265,7 +276,7 @@ hist(log(apartments_100k_cleaned$price), main = "Histogram of Log(Price)", xlab 
 
 ```{r}
 #| label: fig-simul
-#| fig-cap: "Log transform histograms"
+#| fig-cap: "Simulated Values"
 #| echo: false
 #| message: false
 #| warning: false
