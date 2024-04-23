@@ -13,7 +13,9 @@ joined_data2 = joined_data %>%
   mutate(geometry = st_centroid(geometry)) %>% 
   mutate(longitude = st_coordinates(geometry)[,1], 
          latitude = st_coordinates(geometry)[,2],
-         price = log(price)) %>% 
+         price = log(price),
+         population = log(population),
+         square_feet = log(square_feet)) %>% 
   st_drop_geometry()
 
 data = as.data.frame(joined_data2)

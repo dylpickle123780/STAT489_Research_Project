@@ -22,8 +22,8 @@ voronoi_polys = st_sample(square_bound, number_polys) %>%
 #each bedroom will increase rent by anywhere from 300 to 600
 beta_bedrooms = (sin(3*voronoi_polys$center[,1]+3*voronoi_polys$center[,2])+1)*60
 beta_bathrooms = (cos(5*voronoi_polys$center[,1])+cos(3*voronoi_polys$center[,2])+2)*60
-beta_square_footage = (tan(1/2*voronoi_polys$center[,1]+1/2*voronoi_polys$center[,2])+1)/1000
-beta_population = (cos(3*voronoi_polys$center[,1])+sin(5*voronoi_polys$center[,2])+2)/100000
+beta_square_footage = (tan(1/2*voronoi_polys$center[,1]+1/2*voronoi_polys$center[,2])+1)*60
+beta_population = (cos(3*voronoi_polys$center[,1])+sin(5*voronoi_polys$center[,2])+2)*60
 
 voronoi_polys = voronoi_polys[,1]
 
@@ -36,8 +36,8 @@ voronoi_polys = voronoi_polys %>%
 #now to generate number of beds and baths and square footage in each area 
 bedrooms_i = rpois(number_polys,1)+1
 bathrooms_i = rpois(number_polys,1)+1
-square_feet_i = rnorm(number_polys, mean = 500, sd = 60)
-population_i = rbeta(number_polys,0.2,0.9)*1000000
+square_feet_i = log(rnorm(number_polys, mean = 500, sd = 60))
+population_i = log((rbeta(number_polys,0.2,0.9)*1000000)+1)
 
 #assume errors are ~N(0,20)
 voronoi_polys = voronoi_polys %>% 

@@ -81,9 +81,9 @@ Discuss McCord et al, Yoshida and Seya papers. All doing very similar things wit
 set.seed("123780")
 ```
 
-  We used data from the UCI Machine learning website that had an apartment dataset containing roughly 52,000 observations over the entire United States. We believe this to be a representative sample of the overall housing market as there was data from all 50 states with a wide and representative range of housing prices [@unknown_apartment_2019]. The observations in this dataset are from the 2018-2019 period. We only analyzed the contiguous United States and removed some observations that were missing data. This translated to removing ~40 observations out of 52,000. From the histogram of price we decided to log transform the price to make it more normally distributed as can be seen in \cref{fig-transform}.
+  We used data from the UCI Machine learning website that had an apartment dataset containing roughly 52,000 observations over the entire United States. We believe this to be a representative sample of the overall housing market as there was data from all 50 states with a wide and representative range of housing prices [@unknown_apartment_2019]. The observations in this dataset are from the 2018-2019 period. We only analyzed the contiguous United States and removed some observations that were missing data. The file also had some duplicate observations. This translated to removing ~4000 observations out of 52,000. From the histogram of price we decided to log transform the price to make it more normally distributed as can be seen in \cref{fig-transform}. We also decided to log transform both population and square footage for our models.
 
-  Next we decided that we would convert this point data into county level data. This allowed us to add population as a covariate and also the number of observations in each county as a proxy for how active the renting environment is in each county. We decided to do this to also have the fair market data at the same level as the actual data. For number of bathrooms and bedrooms we took the median of all observations in the county and for square footage we took the mean square footage of the observations. Once aggregated into county level data we were left with roughly 1000 observations of counties out of the 3109 counties in the contiguous United States. 
+  Next we decided that we would convert this point data into county level data. This allowed us to add population as a covariate. We decided to do this to also have the fair market data at the same level as the actual data. For number of bathrooms and bedrooms we took the median of all observations in the county and for square footage we took the mean square footage of the observations. Once aggregated into county level data we were left with roughly 1000 observations of counties out of the 3109 counties in the contiguous United States. 
 
   We used the Department of Housing’s Fair market rent data from 2019 for our fair market data and also log transformed the pricing (FMR Report 2023). They collected this data by finding the 40th percentile income of any given county in the United States and saying that 30% of their income is a "fair market rent" hence the name. There were roughly 4,400 observations accounting for rent areas across the United States at roughly the county level which provided for the baseline figures we used for the comparison. 
   
@@ -142,25 +142,25 @@ library(tidyverse)
 library(ggpubr)
 
 pl_1 = ggplot(voronoi_polys)+
-  geom_sf(aes(fill = simulation_results$footage_val - square_footage),
+  geom_sf(aes(fill = abs(simulation_results$footage_val - square_footage)),
                     color = scales::alpha("black",
                                 alpha = 0.1))+
   scale_fill_viridis_c(name = "Coefficient Differences")
 
 pl_2 = ggplot(voronoi_polys)+
-  geom_sf(aes(fill = simulation_results$population_val - population),
+  geom_sf(aes(fill = abs(simulation_results$population_val - population)),
                     color = scales::alpha("black",
                                 alpha = 0.1))+
   scale_fill_viridis_c()
 
 pl_3 = ggplot(voronoi_polys)+
-  geom_sf(aes(fill = simulation_results$bed_val - bedrooms),
+  geom_sf(aes(fill = abs(simulation_results$bed_val - bedrooms)),
                     color = scales::alpha("black",
                                 alpha = 0.1))+
   scale_fill_viridis_c()
 
 pl_4 = ggplot(voronoi_polys)+
-  geom_sf(aes(fill = simulation_results$bath_val - bathrooms),
+  geom_sf(aes(fill = abs(simulation_results$bath_val - bathrooms)),
                     color = scales::alpha("black",
                                 alpha = 0.1))+
   scale_fill_viridis_c()
