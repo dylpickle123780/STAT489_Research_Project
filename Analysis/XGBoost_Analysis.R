@@ -13,7 +13,9 @@ joined_data2 = joined_data %>%
   mutate(geometry = st_centroid(geometry)) %>% 
   mutate(longitude = st_coordinates(geometry)[,1], 
          latitude = st_coordinates(geometry)[,2],
-         price = log(price)) %>% 
+         price = log(price),
+         population = log(population),
+         square_feet = log(square_feet)) %>% 
   st_drop_geometry()
 
 data = as.data.frame(joined_data2)
@@ -22,23 +24,6 @@ data_split = createDataPartition(data$price,
                                  list = FALSE)
 data_train = as.data.frame(data[data_split,])
 data_test = as.data.frame(data[-data_split,])
-
-##same as the RF model but with XGB
-load("../Data/100k_shape_data.Rdata")
-joined_data2 = joined_data %>% 
-  mutate(geometry = st_centroid(geometry)) %>% 
-  mutate(longitude = st_coordinates(geometry)[,1], 
-         latitude = st_coordinates(geometry)[,2],
-         price = log(price)) %>% 
-  st_drop_geometry()
-
-data = as.data.frame(joined_data2)
-data_split = createDataPartition(data$price,
-                                 p = 0.8,
-                                 list = FALSE)
-data_train = as.data.frame(data[data_split,])
-data_test = as.data.frame(data[-data_split,])
-
 
 
 #Training Model

@@ -13,23 +13,24 @@ load("../Data/100k_shape_data.Rdata")
 model_data = joined_data %>% 
   mutate(price = log(price))%>% 
   mutate(square_feet = log(square_feet), population = log(population)) %>% 
+  select(-Count) %>% 
   st_transform(4326) %>% 
   as_Spatial() 
 
 #Selecting Bandwidth
-model_bandwidth = bw.gwr(price ~ Count + bedrooms + bathrooms + square_feet + population, data = model_data,
+model_bandwidth = bw.gwr(price ~ bedrooms + bathrooms + square_feet + population, data = model_data,
                          kernel = "exponential", parallel.method = "omp")
 
 #running model
-model_basic = gwr.basic(price ~ Count + bedrooms + bathrooms + square_feet + population, data = model_data, kernel = "exponential",
+model_basic = gwr.basic(price ~ bedrooms + bathrooms + square_feet + population, data = model_data, kernel = "exponential",
                         bw = model_bandwidth, parallel.method = "omp")
 
 #Extracting model coefficients
-model_coefficients = cbind(model_basic$SDF$Count, model_basic$SDF$bedrooms, model_basic$SDF$bathrooms,
+model_coefficients = cbind(model_basic$SDF$bedrooms, model_basic$SDF$bathrooms,
                            model_basic$SDF$square_feet, model_basic$SDF$population)
 
 #multicollinearity diagnostics
-multicollin_diagnostic = gwr.collin.diagno(price ~ Count + bedrooms + bathrooms + square_feet + population, data = model_data, kernel = "exponential",
+multicollin_diagnostic = gwr.collin.diagno(price ~ bedrooms + bathrooms + square_feet + population, data = model_data, kernel = "exponential",
                                            bw = model_bandwidth)
 
 model_adjusted = gwr.t.adjust(model_basic)
@@ -49,11 +50,10 @@ test_data = counties()%>%
          STATEFP!="69")%>% 
   left_join(county_census, by = join_by(GEOID == FIPS)) %>% 
   select(geometry,POPESTIMATE2019)%>% 
-  mutate(Count = mean(model_data$Count),
-         bedrooms = median(model_data$bedrooms),
+  mutate(bedrooms = median(model_data$bedrooms),
          bathrooms = median(model_data$bathrooms),
-         square_feet = mean(model_data$square_feet),
-         POPESTIMATE2019 = mean(model_data$population)) %>%
+         square_feet = log(mean(model_data$square_feet)),
+         POPESTIMATE2019 = log(mean(model_data$population))) %>%
   rename(population = POPESTIMATE2019) %>% 
   as_Spatial()
 
@@ -63,7 +63,7 @@ gwr_predictions = gwr.predict(model_data$price ~ ., model_data, test_data,
 
 model_results = gwr_predictions$SDF %>% as("sf")
 
-
+#FMR
 load("../Data/FMR_shape_data.Rdata")
 
 #Turning to spatial
@@ -119,10 +119,6 @@ pl_3 = ggplot(model_results)+
   geom_sf(aes(fill = square_feet_coef))+
   scale_fill_viridis_c(option = "magma")
 
-pl_4 = ggplot(model_results)+
-  geom_sf(aes(fill = Count_coef))+
-  scale_fill_viridis_c(option = "magma")
-
 pl_5 = ggplot(model_results)+
   geom_sf(aes(fill = population_coef))+
   scale_fill_viridis_c(option = "magma")
@@ -142,13 +138,11 @@ plot_significance = function(data = model_diag_results, par, coefficient){
   return(plot)
 }
 
-pl_bedrooms = plot_significance(par = model_diag_results$bedrooms_p_fb, coefficient = model_coefficients[,4])
+pl_bedrooms = plot_significance(par = model_diag_results$bedrooms_p_fb, coefficient = model_coefficients[,1])
 
-pl_bathrooms = plot_significance(par = model_diag_results$bathrooms_p_fb, coefficient = model_coefficients[,4])
+pl_bathrooms = plot_significance(par = model_diag_results$bathrooms_p_fb, coefficient = model_coefficients[,2])
 
-pl_Count = plot_significance(par = model_diag_results$Count_p_fb, coefficient = model_coefficients[,4])
-
-pl_square_feet = plot_significance(par = model_diag_results$square_feet_p_fb, coefficient = model_coefficients[,4])
+pl_square_feet = plot_significance(par = model_diag_results$square_feet_p_fb, coefficient = model_coefficients[,3])
 
 pl_population = plot_significance(par = model_diag_results$population_p_fb, coefficient = model_coefficients[,4])
 
@@ -157,7 +151,10 @@ pl_population = plot_significance(par = model_diag_results$population_p_fb, coef
 set.seed("123780")
 
 gwr_data = joined_data %>% 
-  mutate(price = log(price))
+  mutate(price = log(price),
+         square_feet = log(square_feet),
+         population = log(population)) %>% 
+  select(-Count)
 
 
 # Create data split
