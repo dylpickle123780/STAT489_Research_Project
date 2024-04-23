@@ -45,16 +45,8 @@ bibliography: 489_SP24_Group2.bib
   
   The United States is infamous for its housing unaffordability crisis with over half of American Renters unable to afford rent according to the Joint Center for Housing Studies at Harvard University (Harvard 2023). However, with the government allocating 72.6 Billion dollars to be spent in 2025 for the Department of Housing and Urban Development with an additional 185 billion dollars to be spent to solve the housing crisis over the next ten years, there has to be a way to allocate the funds to maximize people being able to afford their rent (HUD Budget 2023). 
   
-<<<<<<< HEAD
+
   Within the news cycles, it is common to hear about the housing crisis especially within places like New York City and the western coast of the United States. With the government spending billions to tackle the issues of housing unaffordability, it is important to know where the money should be spent to maximize the number of people who can afford their rent. When renters are able to afford their rent, it can lead to outcomes like a reduction in intergenerational poverty which only improves the overall well being of the country.(Calabrese, Beadles, French-Fuller 2021)
-=======
-  Show a stat where places like NYC and LA are dealing with homelessness problems and our unaffordability statistic is showing that these places are the most unfair. 
-
-  If people are housed they are less likely to do XYZ thing. 
->>>>>>> 50ad548b37c684347f7a67c14cbcc5c8572f7a91
-
-  Show how urban housing can lead to better outcomes in places like Europe which have good urban housing policies and thus less crime.
-
   
   The Fair Market Rent system is used by the US government to allocate housing vouchers to where housing is unaffordable to then attempt to put a downward pressure on rental prices with below market rate rental rates. We believe that the FMR can be improved upon to incorporate live housing stock data to make better inferences on where in the United States housing unaffordability is. We think that this is the case because the FMR system is based on economic factors that do not take into account the actual market rent in a given area. However, housing prices are influenced by factors other than economic factors such as location, amenities, and the overall desirability of the area. (Campbell 2009). 
 
@@ -66,9 +58,8 @@ bibliography: 489_SP24_Group2.bib
 
 
 # Related Works
-Paper on Random forests (Breiman) overviewing method and explaining what they can accomplish.
+Random Forests are a method developed by Leo Breiman in 2001 that uses a collection of decision trees to make predictions on a dataset. The method is known for its high predictive power and its ability to handle large datasets with many features. It employs randomness by using a subset of the features at each split in the tree and a subset of the observations to build the trees. In the field of housing, Random Forests have been used to predict housing prices and to identify the most important features that influence housing prices. It was known to be apt at it due it's asymptotic variance being lower than other models like linear regression (Breiman 2001).
 
-Possibly paper on XGBoost overviewing method
 
 Paper on Geographically weighted regression (Brundson et al). Explain how GWR came about and what it addressed about other models. Transition into housing. 
 
