@@ -1,25 +1,41 @@
 ---
-title: "Final Presentation"
+title: "Fair Market Rent Difference: A Spatial Analysis of Unfair Housing Prices"
 author: "Dylan Micheals & Shouro Shuvit"
 format: pptx
 editor: visual
 ---
 
-## Quarto
+## Introduction
 
-Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
+-   **Problem**: Housing prices are often unfair and unaffordable
+-   **Current Policy**: Fair Market Rent (FMR) is used to determine housing prices
+-   **Goal**: Analyze the difference between FMR and actual housing prices to identify areas of unfair housing prices
 
-## Bullets
+## Methods
 
-When you click the **Render** button a document will be generated that includes:
+-  **Data**: 100k apartments for rent classified dataset
+- **Data**: Explain FMR dataset
+-  **Analysis**: 
+    -  **Exploratory Data Analysis**: Analyze correlations between variables and create a basic linear model
+    -  **Random Forest**: Predict housing prices based on bedrooms, bathrooms, square footage, and population
+    -  **Geographically Weighted Regression**: Predict housing prices based on bedrooms, bathrooms, square footage, and population
+- **Model Choice**: GWR was chosen because it accounts for spatial autocorrelation which was crucial in our understanding of how the covariates vary over space
+  - Use the Simulation study as proof
 
--   Content authored with markdown
--   Output from executable code
 
-## Code
+## Results
 
-When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
+- **Insert Plots here**
+- **Show where in the US we see our greatest discrepancies**
+- **The validity of our results**
 
-```{r}
-1 + 1
-```
+## Discusion
+- **What do our results mean?**
+- **Why are some areas more unfair than others?**
+- **How can we use this information to make housing more affordable?**
+
+## Conclusion
+- **Summarize our results**
+- **Moving forward, what can we do to improve upon our research**
+
+
