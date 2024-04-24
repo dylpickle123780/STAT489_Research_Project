@@ -54,8 +54,7 @@ test_data = counties()%>%
   select(geometry,POPESTIMATE2019)%>% 
   mutate(bedrooms = median(model_data$bedrooms),
          bathrooms = median(model_data$bathrooms),
-         square_feet = mean(model_data$square_feet),
-         POPESTIMATE2019 = mean(model_data$population)) %>%
+         square_feet = mean(model_data$square_feet)) %>%
   rename(population = POPESTIMATE2019) %>% 
   as_Spatial()
 
@@ -107,18 +106,40 @@ test_data_fmr = counties() %>%
          STATEFP!="15",
          STATEFP!="60",
          STATEFP!="69") %>% 
-  select(geometry) %>% 
+  left_join(county_census, by = join_by(GEOID == FIPS)) %>% 
+  select(geometry, POPESTIMATE2019) %>% 
   mutate(logFMR_0 = mean(fmr_data$logFMR_0),
          logFMR_1 = mean(fmr_data$logFMR_1),
          logFMR_3 = mean(fmr_data$logFMR_3),
          logFMR_4 = mean(fmr_data$logFMR_4),
-         logPop2020 = mean(fmr_data$logPop2020)) %>% 
+         logPop2020 = gwr_pop$SDF$prediction) %>% 
+  select(-POPESTIMATE2019) %>% 
   as_Spatial()
 
 #running prediction model
-gwr_predictions_fmr = gwr.predict(model_data_fmr$logFMR_2 ~ ., model_data_fmr,
-                                  test_data_fmr, model_bandwidth, 
-                                  kernel = "exponential")
+gwr_fm0 = gwr.predict(model_data_fmr$logFMR_0 ~ 1, model_data_fmr, test_data_fmr, 
+                            model_bandwidth, kernel = "exponential")
+
+gwr_fm1 = gwr.predict(model_data_fmr$logFMR_1 ~ 1, model_data_fmr, test_data_fmr, 
+                            model_bandwidth, kernel = "exponential")
+
+gwr_fm3 = gwr.predict(model_data_fmr$logFMR_3 ~ 1, model_data_fmr, test_data_fmr, 
+                            model_bandwidth, kernel = "exponential")
+
+gwr_fm4 = gwr.predict(model_data_fmr$logFMR_4 ~ 1, model_data_fmr, test_data_fmr, 
+                            model_bandwidth, kernel = "exponential")
+
+
+test_data_fmr = test_data_fmr %>% 
+  as("sf") %>% 
+  mutate(logFMR_0 = gwr_fm0$SDF$prediction,
+         logFMR_1 = gwr_fm1$SDF$prediction,
+         logFMR_3 = gwr_fm3$SDF$prediction,
+         logFMR_4 = gwr_fm4$SDF$prediction) %>% 
+  as_Spatial()
+
+gwr_predictions_fmr = gwr.predict(model_data_fmr$logFMR_2 ~ ., model_data_fmr, test_data_fmr, 
+                                  model_bandwidth, kernel = "exponential")
 
 model_results_fmr = gwr_predictions_fmr$SDF %>% as("sf")
 
