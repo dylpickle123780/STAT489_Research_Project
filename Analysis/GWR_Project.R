@@ -11,8 +11,10 @@ load("../Data/100k_shape_data.Rdata")
 
 #Turning to spatial
 model_data = joined_data %>% 
-  mutate(price = log(price))%>%
-  select(-Count) %>% 
+  mutate(price = log(price),
+         population = log(population),
+         square_feet = log(square_feet))%>%
+  select(-Count) %>%
   st_transform(4326) %>% 
   as_Spatial() 
 
@@ -58,6 +60,26 @@ test_data = counties()%>%
   as_Spatial()
 
 #Run prediction model
+gwr_bathrooms = gwr.predict(model_data$bathrooms ~ 1, model_data, test_data, 
+                            model_bandwidth, kernel = "exponential")
+
+gwr_bedrooms = gwr.predict(model_data$bedrooms ~ 1, model_data, test_data, 
+                            model_bandwidth, kernel = "exponential")
+
+gwr_sqft = gwr.predict(model_data$square_feet ~ 1, model_data, test_data, 
+            model_bandwidth, kernel = "exponential")
+
+gwr_pop = gwr.predict(model_data$population ~ 1, model_data, test_data, 
+            model_bandwidth, kernel = "exponential")
+
+test_data = test_data %>% 
+  as("sf") %>% 
+  mutate(population = gwr_pop$SDF$prediction,
+         bathrooms = gwr_bathrooms$SDF$prediction,
+         bedrooms = gwr_bedrooms$SDF$prediction,
+         square_feet = gwr_sqft$SDF$prediction) %>% 
+  as_Spatial()
+
 gwr_predictions = gwr.predict(model_data$price ~ ., model_data, test_data, 
                               model_bandwidth, kernel = "exponential")
 
@@ -158,7 +180,9 @@ pl_population = plot_significance(par = model_diag_results$population_p_fb, coef
 set.seed("123780")
 
 gwr_data = joined_data %>% 
-  mutate(price = log(price))
+  mutate(price = log(price),
+         square_feet = log(square_feet),
+         population = log(population))
 
 
 # Create data split
