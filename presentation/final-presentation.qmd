@@ -8,34 +8,35 @@ editor: visual
 ## Introduction
 
 -   **Problem**: Housing prices are often unfair and unaffordable
+-   ![](Images/HousingVsWages.png){width="375"}
 -   **Current Policy**: Fair Market Rent (FMR) is used to determine housing prices
+    -   Problem is that it only looks at a narrow portion of what influences housing prices
 -   **Goal**: Analyze the difference between FMR and actual housing prices to identify areas of unfair housing prices
 
 ## Methods
 
--  **Data**: 100k apartments for rent classified dataset
-- **Data**: Explain FMR dataset
--  **Analysis**: 
-    -  **Exploratory Data Analysis**: Analyze correlations between variables and create a basic linear model
-    -  **Random Forest**: Predict housing prices based on bedrooms, bathrooms, square footage, and population
-    -  **Geographically Weighted Regression**: Predict housing prices based on bedrooms, bathrooms, square footage, and population
-- **Model Choice**: GWR was chosen because it accounts for spatial autocorrelation which was crucial in our understanding of how the covariates vary over space
-  - Use the Simulation study as proof
-
+-   **Data**: 100k apartments for Rent Classified Dataset
+-   **Data**: FMR Dataset
+-   **Analysis**:
+    -   **Exploratory Data Analysis**: Analyze correlations between variables and create a basic linear model
+    -   **Random Forest**: Predict housing prices based on bedrooms, bathrooms, square footage, and population
+    -   **Geographically Weighted Regression**: Predict housing prices based on bedrooms, bathrooms, square footage, and population
+-   **Model Choice**: GWR was chosen because it accounts for spatial autocorrelation which was crucial in our understanding of how the covariates vary over space
+    -   Use the Simulation study as proof
 
 ## Results
 
-- **Insert Plots here**
-- **Show where in the US we see our greatest discrepancies**
-- **The validity of our results**
+-   **Insert Plots here**
+-   **Show where in the US we see our greatest discrepancies**
+-   **The validity of our results**
 
-## Discusion
-- **What do our results mean?**
-- **Why are some areas more unfair than others?**
-- **How can we use this information to make housing more affordable?**
+## Discussion
+
+-   **What do our results mean?**
+-   **Why are some areas more unfair than others?**
+-   **How can we use this information to make housing more affordable?**
 
 ## Conclusion
-- **Summarize our results**
-- **Moving forward, what can we do to improve upon our research**
 
-
+-   **Summarize our results**
+-   **Moving forward, what can we do to improve upon our research**
