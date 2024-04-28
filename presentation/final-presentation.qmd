@@ -8,9 +8,16 @@ editor: visual
 ## Introduction
 
 -   **Problem**: Housing prices are often unfair and unaffordable
--   ![](Images/HousingVsWages.png){width="375"}
+
+    ```{r}
+    knitr::include_graphics("Images/HousingVsWages.png")
+
+    ```
+
 -   **Current Policy**: Fair Market Rent (FMR) is used to determine housing prices
+
     -   Problem is that it only looks at a narrow portion of what influences housing prices
+
 -   **Goal**: Analyze the difference between FMR and actual housing prices to identify areas of unfair housing prices
 
 ## Methods
@@ -33,10 +40,14 @@ editor: visual
 ## Discussion
 
 -   **What do our results mean?**
--   **Why are some areas more unfair than others?**
+-   **Why are some areas more unfair than others?**![](Images/New%20York%20City.jpg){width="161"}![](Images/San%20Fran.jpg){width="166"}![](Images/Denver.jpg){width="176"}![](Images/Miami.jpg){width="135"}
+    -   New York City, Western Coast, Colorado, Miami
 -   **How can we use this information to make housing more affordable?**
 
 ## Conclusion
 
--   **Summarize our results**
+-   
+
+    ## **Summarize our results**
+
 -   **Moving forward, what can we do to improve upon our research**
