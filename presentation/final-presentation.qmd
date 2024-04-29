@@ -9,16 +9,25 @@ editor: visual
 
 -   **Problem**: Housing prices are often unfair and unaffordable
 
-    ```{r}
-    knitr::include_graphics("Images/HousingVsWages.png")
-
-    ```
-
 -   **Current Policy**: Fair Market Rent (FMR) is used to determine housing prices
 
     -   Problem is that it only looks at a narrow portion of what influences housing prices
 
 -   **Goal**: Analyze the difference between FMR and actual housing prices to identify areas of unfair housing prices
+
+## Simulation
+```{r,message=FALSE, results = "hide", warning=FALSE, output = FALSE}
+source("../Simulation/GWR_simulation.R")
+```
+
+```{r,fig.fullwidth = TRUE,fig.align='left'}
+ggplot(voronoi_polys)+
+  geom_sf(aes(fill = beta_bathrooms),
+                  color = scales::alpha("black",
+                                alpha = 0.1))+
+  scale_fill_viridis_c(name = "Coefficient Value")+
+  theme_bw()
+```
 
 ## Methods
 
@@ -28,8 +37,10 @@ editor: visual
     -   **Exploratory Data Analysis**: Analyze correlations between variables and create a basic linear model
     -   **Random Forest**: Predict housing prices based on bedrooms, bathrooms, square footage, and population
     -   **Geographically Weighted Regression**: Predict housing prices based on bedrooms, bathrooms, square footage, and population
+    
+## Methods
+
 -   **Model Choice**: GWR was chosen because it accounts for spatial autocorrelation which was crucial in our understanding of how the covariates vary over space
-    -   Use the Simulation study as proof
 
 ## Results
 
@@ -40,7 +51,7 @@ editor: visual
 ## Discussion
 
 -   **What do our results mean?**
--   **Why are some areas more unfair than others?**![](Images/New%20York%20City.jpg){width="161"}![](Images/San%20Fran.jpg){width="166"}![](Images/Denver.jpg){width="176"}![](Images/Miami.jpg){width="135"}
+-   **Why are some areas more unfair than others?**
     -   New York City, Western Coast, Colorado, Miami
 -   **How can we use this information to make housing more affordable?**
 
