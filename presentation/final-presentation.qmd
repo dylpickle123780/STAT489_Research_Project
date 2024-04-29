@@ -19,6 +19,8 @@ date: today
 
 -   **Problem**: Housing prices are often unfair and unaffordable
 
+    -   Need graph here
+
 -   **Current Policy**: Fair Market Rent (FMR) is used to determine housing prices
 
     -   Problem is that it only looks at a narrow portion of what influences housing prices
@@ -77,7 +79,7 @@ ggplot(model_results)+
 -   **How can we use this information to make housing more affordable?**
     -   Information can be used to pinpoint places in the United States FMR policy doesn't meet the needs of the people
 
-## Point of Interest
+## Point of Interest - need the city images here
 
 -   New York City
     -   Density/Population
