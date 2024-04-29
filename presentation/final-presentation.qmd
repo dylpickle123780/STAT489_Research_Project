@@ -57,6 +57,8 @@ ggplot(voronoi_polys)+
 ## Methods
 
 -   **Model Choice**: GWR was chosen because it accounts for spatial autocorrelation which was crucial in our understanding of how the covariates vary over space
+    - **Simulation**: Simulation study showed great explainability and predictive power with relative percent error under 3%
+    - **Out of Sample** When compared to algorithmic models GWR had similar levels 
 
 ## Results
 
@@ -78,29 +80,6 @@ ggplot(model_results)+
     -   We can see why for reasons that our model could not capture
 -   **How can we use this information to make housing more affordable?**
     -   Information can be used to pinpoint places in the United States FMR policy doesn't meet the needs of the people
-
-## Point of Interest - need the city images here
-
--   New York City
-    -   Density/Population
-
-```{=html}
-<!-- -->
-```
--   West Coast
-    -   Zoning Laws that inhibit housing
-
-```{=html}
-<!-- -->
-```
--   Denver
-    -   Mountanous Geography
-
-```{=html}
-<!-- -->
-```
--   Miami
-    -   Affluent Buyers pricing the locals
 
 ## Conclusion
 
