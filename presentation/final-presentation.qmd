@@ -1,8 +1,18 @@
 ---
 title: "Fair Market Rent Difference: A Spatial Analysis of Unfair Housing Prices"
-author: "Dylan Micheals & Shouro Shuvit"
-format: pptx
+author: 
+  name: "Dylan Micheals & Shouro Shuvit"
+  institution: "Texas A\\&M University"
+format: 
+  beamer:
+    include-in-header: 
+      - text: "\\definecolor{TAMUMaroon}{HTML}{500000}"
+      - text: "\\setbeamercolor{palette primary}{bg=TAMUMaroon,fg=white}"
+    theme: metropolis
+    keep-tex: true
+    linkcolor: blue
 editor: visual
+date: today
 ---
 
 ## Introduction
@@ -15,38 +25,47 @@ editor: visual
 
 -   **Goal**: Analyze the difference between FMR and actual housing prices to identify areas of unfair housing prices
 
-## Simulation
-```{r,message=FALSE, results = "hide", warning=FALSE, output = FALSE}
-source("../Simulation/GWR_simulation.R")
-```
-
-```{r,fig.fullwidth = TRUE,fig.align='left'}
-ggplot(voronoi_polys)+
-  geom_sf(aes(fill = beta_bathrooms),
-                  color = scales::alpha("black",
-                                alpha = 0.1))+
-  scale_fill_viridis_c(name = "Coefficient Value")+
-  theme_bw()
-```
-
 ## Methods
 
 -   **Data**: 100k apartments for Rent Classified Dataset
 -   **Data**: FMR Dataset
 -   **Analysis**:
     -   **Exploratory Data Analysis**: Analyze correlations between variables and create a basic linear model
-    -   **Random Forest**: Predict housing prices based on bedrooms, bathrooms, square footage, and population
+    -   **Random Forest**: Algorithmic model used for its predictive accuracy and 
     -   **Geographically Weighted Regression**: Predict housing prices based on bedrooms, bathrooms, square footage, and population
     
+## Simulation
+```{r,message=FALSE, results = "hide", warning=FALSE, output = FALSE}
+source("../Simulation/GWR_simulation.R")
+```
+
+```{r,fig.fullwidth = TRUE,fig.align='left'}
+library(tidyverse)
+library(ggpubr)
+
+ggplot(voronoi_polys)+
+  geom_sf(aes(fill = abs(simulation_results$residual)),
+                    color = scales::alpha("black",
+                                alpha = 0.1))+
+  scale_fill_viridis_c(name = "Absolute Error")+
+  ggtitle(label = "Absolute Error of Price")
+```
+
 ## Methods
 
 -   **Model Choice**: GWR was chosen because it accounts for spatial autocorrelation which was crucial in our understanding of how the covariates vary over space
 
 ## Results
+```{r, message=FALSE, results = "hide", cache=TRUE, warning=FALSE}
+source("../Analysis/GWR_Project.R")
+ggplot(model_results)+
+  geom_sf(aes(fill = re_scale_diff), name = "Price difference",
+                    color = scales::alpha("black",
+                                alpha = 0.1))+
+  scale_fill_viridis_c(name = "Difference in $")+
+  ggtitle(label = "Predicted Price difference using Exponential kernel")
 
--   **Insert Plots here**
--   **Show where in the US we see our greatest discrepancies**
--   **The validity of our results**
+```
 
 ## Discussion
 
