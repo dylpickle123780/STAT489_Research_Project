@@ -19,8 +19,6 @@ date: today
 
 -   **Problem**: Housing prices are often unfair and unaffordable
 
-    -   Need graph here
-
 -   **Current Policy**: Fair Market Rent (FMR) is used to determine housing prices
 
     -   Problem is that it only looks at a narrow portion of what influences housing prices
@@ -33,7 +31,7 @@ date: today
 -   **Data**: FMR Dataset
 -   **Analysis**:
     -   **Exploratory Data Analysis**: Analyze correlations between variables and create a basic linear model
-    -   **Random Forest**: Algorithmic model used for its predictive accuracy and
+    -   **Random Forest**: Algorithmic model used for its predictive accuracy
     -   **Geographically Weighted Regression**: Predict housing prices based on bedrooms, bathrooms, square footage, and population
 
 ## Simulation
