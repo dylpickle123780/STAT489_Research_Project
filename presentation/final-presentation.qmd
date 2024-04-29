@@ -31,10 +31,11 @@ date: today
 -   **Data**: FMR Dataset
 -   **Analysis**:
     -   **Exploratory Data Analysis**: Analyze correlations between variables and create a basic linear model
-    -   **Random Forest**: Algorithmic model used for its predictive accuracy and 
+    -   **Random Forest**: Algorithmic model used for its predictive accuracy and
     -   **Geographically Weighted Regression**: Predict housing prices based on bedrooms, bathrooms, square footage, and population
-    
+
 ## Simulation
+
 ```{r,message=FALSE, results = "hide", warning=FALSE, output = FALSE}
 source("../Simulation/GWR_simulation.R")
 ```
@@ -56,6 +57,7 @@ ggplot(voronoi_polys)+
 -   **Model Choice**: GWR was chosen because it accounts for spatial autocorrelation which was crucial in our understanding of how the covariates vary over space
 
 ## Results
+
 ```{r, message=FALSE, results = "hide", cache=TRUE, warning=FALSE}
 source("../Analysis/GWR_Project.R")
 ggplot(model_results)+
@@ -70,10 +72,33 @@ ggplot(model_results)+
 ## Discussion
 
 -   **What do our results mean?**
--   **Why are some areas more unfair than others?**
-    -   New York City, Western Coast, Colorado, Miami
+    -   As per usual the coasts were more expensive than the interior of the country
+    -   We can see why for reasons that our model could not capture
 -   **How can we use this information to make housing more affordable?**
-    -   Information can be used to pinpoint
+    -   Information can be used to pinpoint places in the United States FMR policy doesn't meet the needs of the people
+
+## Point of Interest
+
+-   New York City
+    -   Density/Population
+
+```{=html}
+<!-- -->
+```
+-   West Coast
+    -   Zoning Laws that inhibit housing
+
+```{=html}
+<!-- -->
+```
+-   Denver
+    -   Mountanous Geography
+
+```{=html}
+<!-- -->
+```
+-   Miami
+    -   Affluent Buyers pricing the locals
 
 ## Conclusion
 
