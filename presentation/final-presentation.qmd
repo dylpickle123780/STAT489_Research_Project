@@ -57,8 +57,8 @@ ggplot(voronoi_polys)+
 ## Methods
 
 -   **Model Choice**: GWR was chosen because it accounts for spatial autocorrelation which was crucial in our understanding of how the covariates vary over space
-    - **Simulation**: Simulation study showed great explainability and predictive power with relative percent error under 3%
-    - **Out of Sample** When compared to algorithmic models GWR had similar levels 
+    -   **Simulation**: Simulation study showed great explainability and predictive power with relative percent error under 3%
+    -   **Out of Sample** When compared to algorithmic models GWR had similar levels
 
 ## Results
 
