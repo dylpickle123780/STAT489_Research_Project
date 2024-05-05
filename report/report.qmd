@@ -33,57 +33,56 @@ author:
         postal-code: 77843
     email: shouroshuvit@tamu.edu
 abstract: |
-  The fair market rent (FMR) system in the United States is used by the Department of Housing to ascertain what housing should cost in any given county based on economic factors, however reality often does not reflect this estimate as other factors push the cost of housing higher. We propose Fair Market Rent Difference as an analysis technique that leverages Random Forests in order to find where in the United States there is an abnormal difference between the FMR and the actual market rent. With Geographically Weighted Regression, we are able to accurately create a predictive field that shows these disparities and what areas they are formed in. The analysis allows for a broad overlook of how housing unaffordability fluctuates with respect to space when it is compared to a price point that is based on the economic data of the county. This analysis can be a baseline for future research into market conditions that drive regions of the US to have higher than expected prices by the government to then enact policy for housing affordability in unsuspecting places.
+  The fair market rent (FMR) system in the United States is used by the Department of Housing to determine what housing should cost in any given county based on economic factors, however estimates do not reflect reality as other factors push the cost of housing higher. We propose Fair Market Rent Difference as an analysis technique that leverages Random Forests in order to find where in the United States there is an abnormal difference between the FMR and the actual market rent. With Geographically Weighted Regression, we are able to accurately create a predictive field that shows these disparities and what areas they are formed in. The analysis allows for a broad overlook of how housing unaffordability fluctuates with respect to space when it is compared to a price point that is based on the economic data of the county. This analysis can be a baseline for future research into market conditions that drive regions of the US to have higher than expected prices by the government to then enact policy for housing affordability in unsuspecting places.
 
 keywords: 
   - Geographically Weighted Regression
   - Rent Pricing
 bibliography: 489_SP24_Group2.bib
 ---
-  
+
 # Introduction {#sec-intro}
-  
-  The United States is infamous for its housing unaffordability crisis with over half of American Renters unable to afford rent according to the Joint Center for Housing Studies at Harvard University [@harvard_americas_2023]. However, with the government allocating 72.6 Billion dollars to be spent in 2025 for the Department of Housing and Urban Development with an additional 185 billion dollars to be spent to solve the housing crisis over the next ten years, there has to be a way to allocate the funds to maximize people being able to afford their rent [@HUD_fair_2023]. 
-  
 
-  Within the news cycles, it is common to hear about the housing crisis especially within places like New York City and the western coast of the United States. With the government spending billions to tackle the issues of housing unaffordability, it is important to know where the money should be spent to maximize the number of people who can afford their rent. When renters are able to afford their rent, it can lead to outcomes like a reduction in intergenerational poverty which only improves the overall well being of the country.[@calabrese_impacts_2021]
-  
-  The Fair Market Rent system is used by the US government to allocate housing vouchers to where housing is unaffordable to then attempt to put a downward pressure on rental prices with below market rate rental rates. We believe that the FMR can be improved upon to incorporate live housing stock data to make better inferences on where in the United States housing unaffordability is. We think that this is the case because the FMR system is based on economic factors that do not take into account the actual market rent in a given area. However, housing prices are influenced by factors other than economic factors such as location, amenities, and the overall desirability of the area. [@Campbell_what_2009]. 
+The United States is infamous for its housing unaffordability crisis with over half of American Renters unable to afford rent according to the Joint Center for Housing Studies [@harvard_americas_2023]. However, with the government allocating 72.6 Billion dollars to be spent in 2025 for the Department of Housing and Urban Development with an additional 185 billion dollars to be spent to solve the housing crisis over the next ten years, we want to find a way to allocate the funds to maximize people being able to afford their rent [@HUD_fair_2023].
 
-  Currently, the Fair Market Rent system relies on a multitude of indicators which mainly includes economic factors like household wealth and GDP per capita within counties to find a 40th percentile price for what can be affordable housing for 60% of the population within a certain area. This system will then allocate housing units at those determined prices to push down the price of rent in those markets or allow for vouchers to be used to live in those areas. The main issue that is found is that market rent can vary wildly from year to year for reasons other than the economic well being of the community [@HUD_fair_2023]. 
+Within the news cycles, it is common to hear about the housing crisis especially within places like New York City and the western coast of the United States. With the government spending billions to tackle the issues of housing unaffordability, it is important to know where the money should be spent to maximize the number of people who can afford their rent. When renters are able to afford their rent, it can lead to outcomes like a reduction in intergenerational poverty which only improves the overall well being of the country.[@calabrese_impacts_2021]
 
-  With this research, we aim to identify the gap between the the actual market rent and the FMR data provided by the government to portray an accurate picture of the real estate market and see what parts of the market are actually affordable and what parts are not. We also will attempt to discover how and why these price differences occur in these areas. 
-  
-  In all, we want to compare the difference between market rent and Fair Market Rent to capture more housing unaffordability data than either data set can do alone. 
+The Fair Market Rent system is used by the US government to allocate housing vouchers to where housing is unaffordable to then attempt to put a downward pressure on rental prices with below market rate rental prices. We believe that the FMR can be improved upon to incorporate live housing stock data to make better inferences on where in the United States housing unaffordability is. We think that this is the case because the FMR system is based on economic factors that do not take into account the actual market rent in a given area. However, housing prices are influenced by factors other than economic factors such as location, amenities, and the overall desirability of the area. [@Campbell_what_2009].
 
+Currently, the Fair Market Rent system relies on a multitude of indicators which mainly includes economic factors like household wealth and GDP per capita within counties to find a 40th percentile price for what can be affordable housing for 60% of the population within a certain area. This system will then allocate housing units at those determined prices to push down the price of rent in those markets or allow for vouchers to be used to live in those areas. The main issue that is found is that market rent can vary wildly from year to year for reasons other than the economic well being of the community [@HUD_fair_2023].
+
+With this research, we aim to identify the gap between the the actual market rent and the FMR data provided by the government to portray an accurate picture of the real estate market and see what parts of the market are actually affordable and what parts are not. We also will attempt to discover how and why these price differences occur in these areas.
+
+In all, we want to compare the difference between market rent and Fair Market Rent to capture more housing unaffordability data than either data set can do alone.
 
 # Related Works
+
 Random Forests are a method developed by Leo Breiman in 2001 that uses a collection of decision trees to make predictions on a dataset. The method is known for its high predictive power and its ability to handle large datasets with many features. It employs randomness by using a subset of the features at each split in the tree and a subset of the observations to build the trees. In the field of housing, Random Forests have been used to predict housing prices and to identify the most important features that influence housing prices. It was known to be apt at it due it's asymptotic variance being lower than other models like linear regression [@breiman_random_2001].
 
+Geographically weighted regression (GWR) is a method proposed by Brunsdon et al. for accounting for spatial nonstationarity [@brunsdon_geographically_1998]. GWR accounts for this nonstationarity by allowing the coefficients of the regression model to vary over geographic space. The method is similar to kernel regression except that the weighting is done using the latitude and longitude coordinates rather than the values of the predictors themselves. One of the many applications of this method that Brunsdon et al. propose themselves is on house prices.
 
-Geographically weighted regression (GWR) is a method proposed by Brunsdon et al. for accounting for spatial nonstationarity [@brunsdon_geographically_1998]. GWR accounts for this nonstationarity by allowing the coefficients of the regression model to vary over geographic space. The method is similar to kernel regression except that the weighting is done using the latitude and longitude coordinates rather than the values of the predictors themselves. One of the many applications of this method that Brunsdon et al. propose themselves is on house prices. 
+Fuss and Koller analyzed a residential market in Switzerland using five different linear models which each accounted for spatial nonstationarity in different ways [@fuss_role_2016]. Their models included varying levels of complexity up to a spatiotemporal autoregessive (STAR) model. In their findings they showed that every single model that accounted for spatial effects in some way had better in sample accuracy, out of sample accuracy, and forecasting accuracy. These findings show spatial structures need to be accounted for when dealing with housing price models.
 
-Fuss and Koller analyzed a residential market in Switzerland using five different linear models which each accounted for spatial nonstationarity in different ways [@fuss_role_2016]. Their models included varying levels of complexity up to a spatiotemporal autoregessive (STAR) model. In their findings they showed that every single model that accounted for spatial effects in some way had better in sample accuracy, out of sample accuracy, and forecasting accuracy. These findings show spatial structures need to be accounted for when dealing with housing price models. 
-
-Ezebilo analyzed the affordability of rent prices in Papa New Guniea using ordinary least squares regression [@ezebilo_evaluation_2017]. They accounted for spatial effects by including dummy variables such as whether or not the observation was in a certain income area. While the model was significant, the $R^2$ value was low and the effects of variables were not allowed to vary spatially. We hope to account for this using GWR.  
+Ezebilo analyzed the affordability of rent prices in Papa New Guniea using ordinary least squares regression [@ezebilo_evaluation_2017]. They accounted for spatial effects by including dummy variables such as whether or not the observation was in a certain income area. While the model was significant, the $R^2$ value was low and the effects of variables were not allowed to vary spatially. We hope to account for this using GWR.
 
 McCord et al. used a number of spatial models to analyze and predict rent pricing in the UK[@mccord_understanding_2014]. The study used OLS, spatial autoregression (SAR), conditional autoregression (CAR), and GWR. They found that among all of the models GWR performed significantly better in terms of the $R^@$ value and in terms of predictive accuracy. However the paper did not compare against any algorithmic models. Yoshida et al. compared between machine learning and regression approaches on rent pricing in Japan[@yoshida_spatial_2022]. They used OLS and a Gaussian process model and compared it to a random forest and an XGBoost model. They also used the deep neural network (DNN) model that was constructed by Seya et al as comparison [@seya_comparison_2021]. Their findings showed that the random forest models and XGBoost models performed best in terms of predictive accuracy on out of sample data. The gaussian process model performed similarly on smaller datasets but fell behind for larger magnitudes of data. Both of these papers analyzed areas that were much smaller than the scale of the United States. Our paper aims to use the best models of McCord et al. and Yoshida et al. in order to generate the best metric for analyzing pricing disparities in the United States.
 
 # Methods
+
 ```{r set-seed, echo=FALSE, warning=FALSE, message=FALSE}
 set.seed("123780")
 ```
 
-  We used data from the UCI Machine learning website that had an apartment dataset containing roughly 52,000 observations over the entire United States. We believe this to be a representative sample of the overall housing market as there was data from all 50 states with a wide and representative range of housing prices [@unknown_apartment_2019]. The observations in this dataset are from the 2018-2019 period. We only analyzed the contiguous United States and removed some observations that were missing data. The file also had some duplicate observations. This translated to removing ~4000 observations out of 52,000. From the histogram of price we decided to log transform the price to make it more normally distributed as can be seen in \cref{fig-transform}.
+We used data from the UCI Machine learning website that had an apartment dataset containing roughly 52,000 observations over the entire United States. We believe this to be a representative sample of the overall housing market as there was data from all 50 states with a wide and representative range of housing prices [@unknown_apartment_2019]. The observations in this dataset are from the 2018-2019 period. We only analyzed the contiguous United States and removed some observations that were missing data. The file also had some duplicate observations. This translated to removing \~4000 observations out of 52,000. From the histogram of price we decided to log transform the price to make it more normally distributed as can be seen in \cref{fig-transform}.
 
-  Next we decided that we would convert this point data into county level data. This allowed us to add population as a covariate. We decided to do this to also have the fair market data at the same level as the actual data. For number of bathrooms and bedrooms we took the median of all observations in the county and for square footage we took the mean square footage of the observations. Once aggregated into county level data we were left with roughly 1000 observations of counties out of the 3109 counties in the contiguous United States. 
+Next we agregated this point data into county level data. This allowed us to add population as a covariate. We decided to do this to also have the fair market data on the spatial scale as the actual data. For number of bathrooms and bedrooms we took the median of all observations in the county and for square footage we took the mean square footage of the observations. Once aggregated into county level data we were left with roughly 1000 observations of counties out of the 3109 counties in the contiguous United States.
 
-  We used the Department of Housing’s Fair market rent data from 2019 for our fair market data and also log transformed the pricing [@HUD_fair_2023]. They collected this data by finding the 40th percentile income of any given county in the United States and saying that 30% of their income is a "fair market rent" hence the name. There were roughly 4,400 observations accounting for rent areas across the United States at roughly the county level which provided for the baseline figures we used for the comparison. 
-  
-  Geographically weighted regression (GWR) is a method of accounting for spatially varying covariates in a linear regression model [@brunsdon_geographically_1998]. The assumptions of geographically weighted regression are very similar to that of a simple weighted least squares model where the weights are calculated using some kernel function. One key difference is that the weight matrix is calculated for each observation rather than a fixed global weight matrix. Since one aspect of GWR is that coefficients vary smoothly over the space, observations closer to each other will have a greater influence on each other. Since calculating and inverting this matrix for each observation against all the other observations would be computationally problematic, a bandwidth parameter is introduced. This allows the weight matrix to only take into account all obervations within the range of the bandwidth. 
+We used the Department of Housing’s Fair market rent data from 2019 for our fair market data and also log transformed the pricing [@HUD_fair_2023]. They collected this data by finding the 40th percentile income of any given county in the United States and saying that 30% of their income is a "fair market rent" hence the name. There were roughly 4,400 observations accounting for rent areas across the United States at roughly the county level which provided for the baseline figures we used for the comparison.
 
-  To verify that GWR was an appropriate choice for our data we performed a simulation study that utilized voronoi tessellation to create an artificial spatial area. We created an area of 500 polygons to simulate data from. We modeled coefficients by generating sequences that utilized both the x and y coordinates to form a smooth spatially varying set of coefficients. Each of the coefficients used some linear combination of cos, sin, and tan to generate spatially varying coefficients as can be seen below.
-  
+Geographically weighted regression (GWR) is a method of accounting for spatially varying covariates in a linear regression model [@brunsdon_geographically_1998]. The assumptions of geographically weighted regression are very similar to that of a simple weighted least squares model where the weights are calculated using some kernel function. One key difference is that the weight matrix is calculated for each observation rather than a fixed global weight matrix. Since one aspect of GWR is that coefficients vary smoothly over the space, observations closer to each other will have a greater influence on each other. Since calculating and inverting this matrix for each observation against all the other observations would be computationally problematic, a bandwidth parameter is introduced. This allows the weight matrix to only take into account all obervations within the range of the bandwidth.
+
+To verify that GWR was an appropriate choice for our data we performed a simulation study that utilized voronoi tessellation to create an artificial spatial area. We created an area of 500 polygons to simulate data from. We modeled coefficients by generating sequences that utilized both the x and y coordinates to form a smooth spatially varying set of coefficients. Each of the coefficients used some linear combination of cos, sin, and tan to generate spatially varying coefficients as can be seen below.
+
 ```{r simulation, message=FALSE, results = "hide",cache = TRUE, warning=FALSE, output = FALSE}
 source("../Simulation/GWR_simulation.R")
 ggplot(voronoi_polys)+
@@ -94,24 +93,23 @@ ggplot(voronoi_polys)+
   theme_bw()
 ggsave("Sim_coefficients.png", path = "./report_images/figure-pdf")
 ```
-![Plot of simulated bathroom coefficients](./report_images/figure-pdf/Sim_coefficients.png)
-  To simulate observations from this data we used three different distributions. For number of bathrooms and bedrooms we sampled from a poission distribution with a lambda parameter of 1 and then added 1 to the value. This gave us a vector of values that had a minimum of 1 with a maximum of 6 and 7 for bathrooms and bedrooms respectively. This is about the range of values that we observed in our real dataset. For square footage we sampled from a normal distribution with mean 500 and standard deviation of 60 and this was also on the same scale as our data. For population observations we sampled from a beta distribution with scale parameters of 0.2 and 0.9 scaled by 1000000. This gave us a skewed distribution very similar to population values in the United States with most counties having very low populations and a select few having extremely high populations. The generated values can be seen here in \cref{fig-simul}. 
 
-  Another reason for choosing GWR is due to knowing from Fuss and Koller that there will be a spatial structure in our model that needs to be accounted for [@fuss_role_2016]. We also want a statistical model that can give us interpretable coefficients for our covariates. This is what led us to adopting GWR over algorithmic models that may have better predictive power. We address algorithmic models below as a comparison test.
+![Plot of simulated bathroom coefficients](./report_images/figure-pdf/Sim_coefficients.png) To simulate observations from this data we used three different distributions. For number of bathrooms and bedrooms we sampled from a poission distribution with a lambda parameter of 1 and then added 1 to the value. This gave us a vector of values that had a minimum of 1 with a maximum of 6 and 7 for bathrooms and bedrooms respectively. This is about the range of values that we observed in our real dataset. For square footage we sampled from a normal distribution with mean 500 and standard deviation of 60 and this was also on the same scale as our data. For population observations we sampled from a beta distribution with scale parameters of 0.2 and 0.9 scaled by 1000000. This gave us a skewed distribution very similar to population values in the United States with most counties having very low populations and a select few having extremely high populations. The generated values can be seen here in \cref{fig-simul}.
 
-  When creating a GWR model the two most important hyperparameters are the kernel and bandwidth. We decided to use an exponential kernel due to how sharp some of the changes are between counties along the coastline and around the Denver, Colorado area. We estimated the bandwidth using cross validation and came upon as the best fit.
+Another reason for choosing GWR is due to knowing from Fuss and Koller that there will be a spatial structure in our model that needs to be accounted for [@fuss_role_2016]. We also want a statistical model that can give us interpretable coefficients for our covariates. This is what led us to adopting GWR over algorithmic models that may have better predictive power. We address algorithmic models below as a comparison test.
 
-  To get a surface that covered the entire United States we then used leave one out predictions holding all of the covariates at their median or mean in order to get a surface that showed rent pricing as a function solely of space. We repeated the same process with the fair market rent data in order to have two surfaces that depended only on space that we could compare. We then subtracted these two surfaces to obtain a metric that measured the difference between the fair market and realized values in each county. To compare the accuracy and assess the validity of our GWR model we compared it against algorithmic models on out of comparison tests. 
+When creating a GWR model the two most important hyperparameters are the kernel and bandwidth. We decided to use an exponential kernel due to how sharp some of the changes are between counties along the coastline and around the Denver, Colorado area. We estimated the bandwidth using cross validation and came upon as the best fit.
 
-  We used XGboost and Random forests for their predictive power and their effectiveness in predicting rent pricing has been seen in [@yoshida_spatial_2022]. Random forests have been  (Breiman) and
-. Yoshida et al. showed that both XGBoost and Random Forest with coordinates performed better than the deep neural network shown in the paper by Seya et al. [@seya_comparison_2021]. We optimized the hyperparameters using k-fold validation to come upon the best values to be used. 
+To get a surface that covered the entire United States we then used leave one out predictions holding all of the covariates at their median or mean in order to get a surface that showed rent pricing as a function solely of space. We repeated the same process with the fair market rent data in order to have two surfaces that depended only on space that we could compare. We then subtracted these two surfaces to obtain a metric that measured the difference between the fair market and realized values in each county. To compare the accuracy and assess the validity of our GWR model we compared it against algorithmic models on out of comparison tests.
 
-  We compared GWR, Random Forests, and XGboost on predicting and modeling out of sample observations using mean absolute error (MAE), root mean squared error (RMSE), and mean squared error (MSE). We used an 80 20 training split which gave us roughly 800 training observations and 200 testing observations. This comparison along with our simualtion study helped solidify our choice of GWR. 
+We used XGboost and Random forests for their predictive power and their effectiveness in predicting rent pricing has been seen in [@yoshida_spatial_2022]. Random forests have been (Breiman) and . Yoshida et al. showed that both XGBoost and Random Forest with coordinates performed better than the deep neural network shown in the paper by Seya et al. [@seya_comparison_2021]. We optimized the hyperparameters using k-fold validation to come upon the best values to be used.
 
+We compared GWR, Random Forests, and XGboost on predicting and modeling out of sample observations using mean absolute error (MAE), root mean squared error (RMSE), and mean squared error (MSE). We used an 80 20 training split which gave us roughly 800 training observations and 200 testing observations. This comparison along with our simualtion study helped solidify our choice of GWR.
 
 # Results
 
-  Our simulation study resulted in a model that had residuals with no spatial correlation as can be seen in \cref{fig:mae} below. The MAE for the model was `r round(mean(abs(simulation_results$residual)),2)`. Given that the average price in this data set was `r round(mean(voronoi_polys$price),2)` this gives us a relative percent error of `r round(MAE_simulation/mean(voronoi_polys$price)*100,2)`%. This model also had an estimated $R^2$ value of `r round(simulation_model_gwr$GW.diagnostic$gwR2.adj,4)` showing that it was very good at explaining the variability in our simulated data. 
+Our simulation study resulted in a model that had residuals with no spatial correlation as can be seen in \cref{fig:mae} below. The MAE for the model was `r round(mean(abs(simulation_results$residual)),2)`. Given that the average price in this data set was `r round(mean(voronoi_polys$price),2)` this gives us a relative percent error of `r round(MAE_simulation/mean(voronoi_polys$price)*100,2)`%. This model also had an estimated $R^2$ value of `r round(simulation_model_gwr$GW.diagnostic$gwR2.adj,4)` showing that it was very good at explaining the variability in our simulated data.
+
 ```{r absolute_error, message=FALSE, results = "hide", cache=TRUE, warning=FALSE, output = FALSE}
 ggplot(voronoi_polys)+
   geom_sf(aes(fill = abs(simulation_results$residual)),
@@ -122,14 +120,15 @@ ggplot(voronoi_polys)+
 ggsave("Mae_simulation.png", path = "./report_images/figure-pdf")
 
 ```
+
+```{=tex}
 \begin{figure}[ht]
   \centering
   \includegraphics{./report_images/figure-pdf/Mae_simulation.png}
   \caption{Lack of spatial trend in the errors showing much of the spatial variance has been captured}
   \label{fig:mae}
 \end{figure}
-
-
+```
 ```{r coefficients, message=FALSE, results = "hide", cache=TRUE, warning=FALSE, output = FALSE}
 library(tidyverse)
 library(ggpubr)
@@ -162,18 +161,19 @@ ggarrange(simpl_1,simpl_2,simpl_3,simpl_4, common.legend = TRUE, labels = c("Sq_
 ggsave("Coefficients.png", path = "./report_images/figure-pdf")
 
 ```
-  The coefficients seemed to be accurately estimated by the GWR model as can be seen in \cref{fig:coefficients} showing the difference between the true value of the coefficient and its estimated value. Seeing that this model is valid we proceeded to use it on our real data.
 
+The coefficients seemed to be accurately estimated by the GWR model as can be seen in \cref{fig:coefficients} showing the difference between the true value of the coefficient and its estimated value. Seeing that this model is valid we proceeded to use it on our real data.
 
+```{=tex}
 \begin{figure}[ht]
   \centering
   \includegraphics{./report_images/figure-pdf/Coefficients.png}
   \caption{Difference between true value and estimated value for each coefficient}
   \label{fig:coefficients}
 \end{figure}
+```
+Using the real data and predicting at every county we were able to find a predictive surface that showed rent pricing on a log scale as a function of space \cref{fig:pred_surface}. For the prediction we used the median of bathrooms and bedrooms and the mean of population and square footage to hold all covariates constant.
 
-
-  Using the real data and predicting at every county we were able to find a predictive surface that showed rent pricing on a log scale as a function of space \cref{fig:pred_surface}. For the prediction we used the median of bathrooms and bedrooms and the mean of population and square footage to hold all covariates constant. 
 ```{r, message=FALSE, results = "hide", cache=TRUE, warning=FALSE, output = FALSE}
 source("../Analysis/GWR_Project.R")
 ggplot(model_results)+
@@ -184,14 +184,17 @@ ggplot(model_results)+
   ggtitle(label = "Predicted log(price) using Exponential kernel")
 ggsave("Predictive_surface.png", path = "./report_images/figure-pdf")
 ```
+
+```{=tex}
 \begin{figure}[ht]
   \centering
   \includegraphics{./report_images/figure-pdf/Predictive_surface.png}
   \caption{High points on the coasts and in Colorado}
   \label{fig:pred_surface}
 \end{figure}
+```
+We then created the difference surface that was calculated by subtracting the prediction of the real data from the prediction of the fair market rent data. To get a surface that was on the same level as our original response of price we first transformed the real data prediction and fair market rent data back into the normal scale and then subtracted the two responses at each county. The result is a surface shown in \cref{fig:Diff_surface} that has peaks on the West Coast, New York, and Colorado. The peaks show up in roughly the same places as the peaks of the apartment data.
 
-  We then created the difference surface that was calculated by subtracting the prediction of the real data from the prediction of the fair market rent data. To get a surface that was on the same level as our original response of price we first transformed the real data prediction and fair market rent data back into the normal scale and then subtracted the two responses at each county. The result is a surface shown in \cref{fig:Diff_surface} that has peaks on the West Coast, New York, and Colorado. The peaks show up in roughly the same places as the peaks of the apartment data. 
 ```{r, message=FALSE, results = "hide", cache=TRUE, warning=FALSE, output = FALSE}
 library(ggplot2)
 ggplot(model_results)+
@@ -202,33 +205,40 @@ ggplot(model_results)+
   ggtitle(label = "Predicted log(price) using Exponential kernel")
 ggsave("Difference_surface.png", path = "./report_images/figure-pdf")
 ```
+
+```{=tex}
 \begin{figure}[ht]
   \centering
   \includegraphics{./report_images/figure-pdf/Difference_surface.png}
   \caption{}
   \label{fig:Diff_surface}
 \end{figure}
+```
+We performed a test for multicollinearity and found that the average VIF value was `r mean(multicollin_diagnostic$VIF)` with a maximum value of `r max(multicollin_diagnostic$VIF)`. This levels indicate that in this dataset multicollinearity is not an issue that needs to be further investigated. We also ran a test for nonstationarity of all the coefficients used.
 
-  We performed a test for multicollinearity and found that the average VIF value was `r mean(multicollin_diagnostic$VIF)` with a maximum value of `r max(multicollin_diagnostic$VIF)`. This levels indicate that in this dataset multicollinearity is not an issue that needs to be further investigated. We also ran a test for nonstationarity of all the coefficients used. 
 ```{r nonstationarity, fig.align='center'}
 print(significance_test)
 ```
-  
+
 \
-  The high p-values are concerning and require further investigation. However, due to previous literature such as [@fuss_role_2016] we do know that there is a spatial pattern that needs to be accounted for. Further research into the nonstationarity of certain variables at scale should be investigated to conclusively support this. Once our predictive surface was created we also created surfaces of our predictor coefficients. \
+The high p-values are concerning and require further investigation. However, due to previous literature such as [@fuss_role_2016] we do know that there is a spatial pattern that needs to be accounted for. Further research into the nonstationarity of certain variables at scale should be investigated to conclusively support this. Once our predictive surface was created we also created surfaces of our predictor coefficients.\
+
 ```{r, message=FALSE, results = "hide", cache=TRUE, warning=FALSE, output = FALSE}
 library(ggplot2)
 ggarrange(pl_1,pl_2,pl_3,pl_4, common.legend = TRUE, labels = c("Bed","Bath","Sq_ft","Pop"))
 ggsave("Coefficients_real_data.png", path = "./report_images/figure-pdf")
 ```
+
+```{=tex}
 \begin{figure}[ht]
 \centering
 \includegraphics{./report_images/figure-pdf/Coefficients_real_data.png}
 \caption{}
 \label{fig:real_coef}
 \end{figure}
+```
+We considered GWR, random forests, and XGBoost when choosing our models. The out of sample training split provided us with three different measures of predictive accuracy to compare. We used root mean squared error (RMSE), mean squared error (MSE), and mean absolute error (MAE) as the three metrics. From the table below random forest performed the best on out of sample training data in all 3 metrics. However random forest provides no interpretability of the coefficients used in our model. This leads us with less power in analyzing the effects of these covariates which is one of our goals when creating this predictive surface. The metrics of GWR while worse than the two algorithmic models were not too far behind and show that GWR is still a good choice.
 
-  We considered GWR, random forests, and XGBoost when choosing our models. The out of sample training split provided us with three different measures of predictive accuracy to compare. We used root mean squared error (RMSE), mean squared error (MSE), and mean absolute error (MAE) as the three metrics. From the table below random forest performed the best on out of sample training data in all 3 metrics. However random forest provides no interpretability of the coefficients used in our model. This leads us with less power in analyzing the effects of these covariates which is one of our goals when creating this predictive surface. The metrics of GWR while worse than the two algorithmic models were not too far behind and show that GWR is still a good choice. 
 ```{r comparison_metrics, message=FALSE, cache=TRUE, warning=FALSE}
 library(kableExtra)
 library(knitr)
@@ -243,19 +253,19 @@ kable(data) %>%
   kable_styling(latex_options = c("striped","scale_down"))
 ```
 
-
-
 # Discussion
-  As expected the urban coasts are far more unfair compared to the FMR data. This is because of the high demand for housing in these areas and the lack of supply. This leads to a higher price than what the FMR data would suggest. This is to be expected though as it is always seen in the news that their is a housing crisis in these areas. However when we see that the model actually struggles to capture the prices in these areas because our model holds all the covariates at a constant weight, but the price is actually being driven up by the density of people in these areas, and housing policies within the coastal states. We can actually see the delta return to normal as we exit the North Eastern corridor.
-  
-  We can concur that these discrepancies are occurring because of policies enacted in some of these states that can restrict the supply of housing. Policies like rent control, zoning laws, and building codes can all restrict the supply of housing in these areas. [@glaeser_why_2005] This is especially prevalent in places like the western coast which historically have had policies that restrict the supply of housing. In economics we can conclude that with less supply there is going to be higher prices but it would be good to see a metric of housing stock per capita to see how population pressures compare to the amount of housing available but we did not have the data for housing stock in the area. However, the population metric does provide a good proxy for this which we can see in the eastern seaboard and specifically in the Los Angeles Area. 
-  
-  The north eastern coastline can be easily explained by the outsized influence that New York City exhibits and their naturally high housing prices due to their population density. We can see this to be the case as the population covariate falls apart in these highly dense areas because they are anomalous to the rest of the United states, however as stated before the population metric is a good way to determine where housing prices are going to be high, and if the model is holding all other covariates constant then the population metric breaking down in these areas is to be expected. 
-  
-  When it comes to the midwest and the south we can see that the model is actually doing a good job of capturing the prices in these areas. This is because the model is holding all the covariates constant and the prices in these areas are actually being driven by the covariates that we are holding constant. This is a good sign that the model is actually doing a good job of capturing the prices in these areas, however we do see a rise in prices in Colorado. When further research is applied to why this discrepancy exists we see that it has a lot to do with the policy measures in the area, however it is a different case than the urban coasts. In Colorado we see that the prices are being driven up by property taxes as well as zoning laws like the other areas [@mueller_colorados_2023]. We can also concur that the geography of the area is also playing a role in the price of housing in the area. The mountainous terrain of Colorado is a natural barrier to building and this is driving up the price of housing in the area. That does not excuse the policy that is present but it is an additional parameter that is not captured by our model that we can do further research into in the future. 
-  
-  We also have to be considerate of our high p values which would require further investigation, however according the Fuss and Koller we know that housing prices are spacially variate so to account for spatial covariates in the linear model a spatial model is used to show the effects of space on the price even if it is not the most accurate according to our Monte-Carlo Test.[@fuss_role_2016]. Improvements have to made to the model for it to be truly be valid such as adding more covariates that have to do with the geography, weather, and other natural occurrences to improve upon the validity of the spatial model. Although, the model is not perfect it does capture the spatial covariate of population and its impact on housing prices which shows some promise. 
 
+As expected the urban coasts are far more unfair based on our index compared to the FMR data. This is because of the high demand for housing in these areas and the lack of supply. This leads to a higher price than what the FMR data would suggest. However, we see that the model actually struggles to capture the prices in these areas because our model holds all the covariates at a constant weight. We can concur that a posible reason the price is actually being driven up is because the density of people in these areas, and housing policies within the coastal states. We can actually see the delta return to normal as we exit the North Eastern corridor.
+
+We can infer that these discrepancies are occurring because of policies enacted in some of these states that can restrict the supply of housing. Policies like rent control, zoning laws, and building codes can all restrict the supply of housing in these areas. [@glaeser_why_2005] This is especially prevalent in places like the western coast which historically have had policies that restrict the supply of housing. In economics, we can conclude that with less supply there is going to be higher prices but it would be good to see a metric of housing stock per capita. This is so we can see how population pressures compare to the amount of housing available but we did not have the data for housing stock in the area. However, the population metric does provide a good proxy for this which we can see in the eastern seaboard and specifically in the Los Angeles Area.
+
+The north eastern coastline can be easily explained by the outsized influence that New York City exhibits and their naturally high housing prices due to their population density. We can see this to be the case as the population covariate falls apart in these highly dense areas because they are anomalous to the rest of the United states, however as stated before the population metric is a good way to determine where housing prices are going to be high, and if the model is holding all other covariates constant then the population metric breaking down in these areas is to be expected.
+
+When it comes to the midwest and the south we can see that the model is actually doing a good job of capturing the prices in these areas. This is because the model is holding all the covariates constant and the prices in these areas are actually being driven by the covariates that we are holding constant. This is a good sign that the model is actually doing a good job of capturing the prices in these areas, however we do see a rise in prices in Colorado. When further research is applied to why this discrepancy exists we see that it has a lot to do with the policy measures in the area, however it is a different case than the urban coasts. In Colorado we see that the prices are being driven up by property taxes as well as zoning laws like the other areas [@mueller_colorados_2023]. We can also concur that the geography of the area is also playing a role in the price of housing in the area. The mountainous terrain of Colorado is a natural barrier to building and this is driving up the price of housing in the area. That does not excuse the policy that is present but it is an additional parameter that is not captured by our model that we can do further research into in the future.
+
+We also have to be considerate of our high p values which would require further investigation, however according to Fuss and Koller we know that housing prices are spatially variate. To account for spatial covariates in the linear model, a spatial model is used to show the effects of space on the price even if it is not the most accurate according to our Monte-Carlo Test.[@fuss_role_2016]. Improvements have to made to the model such as adding more covariates to the prediction of actual price that have to do with the geography, weather, and other natural occurrences to improve upon the validity of the spatial model. Although the model is not perfect, it does capture the spatial covariate of population and its impact on housing prices which shows some promise.
+
+In all, we believe that despite improvements that can be made to our model, we have discovered a novel way to approach the housing crisis. We believe that the points of interest that we found can be further investigated upon to figure out more metrics on how to assess their unfairness with something like a Small Area FMR that can see which neighborhoods are more expensive than others. In the future, we also believe that our research can be a springboard for other models that can take into account more parameters like policy decisions and zoning laws.
 
 # Appendix
 
