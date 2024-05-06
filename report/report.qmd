@@ -122,7 +122,7 @@ To get a surface that covered the entire United States we then used leave one ou
   \label{fig:mae}
 \end{figure}
 ```
-We used XGboost and Random forests for their predictive power, and Yoshida et al. showed their effectiveness in predicting rent pricing. Yoshida et al. showed that both XGBoost and Random Forest with coordinates performed better than the deep neural network shown in the paper by Seya et al. [@seya_comparison_2021]. We optimized the hyperparameters using k-fold validation to come upon the best values to be used.
+We used XGboost and Random forests for their predictive power, and Yoshida et al. showed their effectiveness in predicting rent pricing. Yoshida et al. showed that both XGBoost and Random Forest with coordinates performed better than the deep neural network shown in the paper by Seya et al. [@seya_comparison_2021]. We optimized the hyperparameters of both models such as the number of trees and the number of covariates used in the trees using k-fold validation with 5 folds to come upon the best values to be used. The number of folds was chosen arbitrarily and further fine tuning could be used to determine the optimal number of folds.
 
 We compared GWR, Random Forests, and XGboost on predicting and modeling out of sample observations using mean absolute error (MAE), root mean squared error (RMSE), and mean squared error (MSE). We used an 80 20 training split which gave us roughly 800 training observations and 200 testing observations. This comparison along with our simualtion study helped solidify our choice of GWR.
 
@@ -215,6 +215,7 @@ ggplot(model_results)+
                     color = scales::alpha("black",
                                 alpha = 0.1))+
   scale_fill_viridis_c(name = "Difference in $")+
+  theme_bw()+
   ggtitle(label = "Predicted Price Difference using Exponential kernel")
 ggsave("Difference_surface.png", path = "./report_images/figure-pdf")
 ```
@@ -266,7 +267,7 @@ data = data.frame(cbind(comparison_metrics_GWR,
                         comparison_metrics_xgboost)) %>% 
   mutate(comparison_metrics_GWR = round(comparison_metrics_GWR,3),
          comparison_metrics_RF = round(comparison_metrics_RF,3),
-         comparison_metrics_xgboost = round(comparison_metrics_xgboost,3))
+         comparison_metrics_xgboost = round(comparison_metrics_xgboost,3)) %>% 
   rename(GWR = comparison_metrics_GWR, RF = comparison_metrics_RF, 
          XGBoost = comparison_metrics_xgboost)
 rownames(data)<-c("RMSE","MAE","MSE")
@@ -287,6 +288,7 @@ When it comes to the midwest and the south we can see that the model is actually
 We also have to be considerate of our high p values which would require further investigation, however according to Fuss and Koller we know that housing prices are spatially variate. To account for spatial covariates in the linear model, a spatial model is used to show the effects of space on the price even if it is not the most accurate according to our Monte-Carlo Test.[@fuss_role_2016]. Improvements have to made to the model such as adding more covariates to the prediction of actual price that have to do with the geography, weather, and other natural occurrences to improve upon the validity of the spatial model. Although the model is not perfect, it does capture the spatial covariate of population and its impact on housing prices which shows some promise.
 
 In all, we believe that despite improvements that can be made to our model, we have discovered a novel way to approach the housing crisis. We believe that the points of interest that we found can be further investigated upon to figure out more metrics on how to assess their unfairness with something like a Small Area FMR that can see which neighborhoods are more expensive than others. In the future, we also believe that our research can be a springboard for other models that can take into account more parameters like policy decisions and zoning laws.
+
 
 # Appendix
 
