@@ -122,7 +122,7 @@ To get a surface that covered the entire United States we then used leave one ou
   \label{fig:mae}
 \end{figure}
 ```
-We used XGboost and Random forests for their predictive power and their effectiveness in predicting rent pricing has been seen in [@yoshida_spatial_2022]. Random forests have been (Breiman) and . Yoshida et al. showed that both XGBoost and Random Forest with coordinates performed better than the deep neural network shown in the paper by Seya et al. [@seya_comparison_2021]. We optimized the hyperparameters using k-fold validation to come upon the best values to be used.
+We used XGboost and Random forests for their predictive power, and Yoshida et al. showed their effectiveness in predicting rent pricing. Yoshida et al. showed that both XGBoost and Random Forest with coordinates performed better than the deep neural network shown in the paper by Seya et al. [@seya_comparison_2021]. We optimized the hyperparameters using k-fold validation to come upon the best values to be used.
 
 We compared GWR, Random Forests, and XGboost on predicting and modeling out of sample observations using mean absolute error (MAE), root mean squared error (RMSE), and mean squared error (MSE). We used an 80 20 training split which gave us roughly 800 training observations and 200 testing observations. This comparison along with our simualtion study helped solidify our choice of GWR.
 
