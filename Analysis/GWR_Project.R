@@ -155,7 +155,7 @@ pl_1 = ggplot(model_results)+
           color = scales::alpha("black",
                                 alpha = 0.1),
           name = "Coefficient values")+
-  scale_fill_viridis_c(option = "magma")
+  scale_fill_viridis_c(option = "magma", name = "Coefficient Values")
 
 pl_2 = ggplot(model_results)+
   geom_sf(aes(fill = bathrooms_coef),
@@ -198,8 +198,6 @@ pl_population = plot_significance(par = model_diag_results$population_p_fb, coef
 
 
 #Out of sample test
-set.seed("123780")
-
 gwr_data = joined_data %>% 
   mutate(price = log(price),
          square_feet = log(square_feet),
@@ -208,6 +206,7 @@ gwr_data = joined_data %>%
 
 # Create data split
 ## First, create training/testing split
+set.seed("123780")
 
 rf_split = createDataPartition(gwr_data$price,
                                p = 0.8,

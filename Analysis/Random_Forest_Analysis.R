@@ -6,7 +6,6 @@ library(doRNG)
 library(sf)
 library(tigris)
 library(caret)
-set.seed("123780")
 
 load("../Data/100k_shape_data.Rdata")
 
@@ -24,7 +23,7 @@ random_f_data = joined_data %>%
 
 # Create data split
 ## First, create training/testing split
-
+set.seed("123780")
 rf_split = createDataPartition(random_f_data$price,
                                p = 0.8,
 )[[1]]

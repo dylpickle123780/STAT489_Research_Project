@@ -19,6 +19,8 @@ joined_data2 = joined_data %>%
   st_drop_geometry()
 
 data = as.data.frame(joined_data2)
+
+set.seed("123780")
 data_split = createDataPartition(data$price,
                                  p = 0.8,
                                  list = FALSE)
