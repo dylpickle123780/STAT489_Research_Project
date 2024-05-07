@@ -100,7 +100,7 @@ ggsave("Sim_coefficients.png", path = "./report_images/figure-pdf")
 ```{=tex}
 \begin{figure}[h]
   \centering
-  \includegraphics[width = 0.9\textwidth]{./report_images/figure-pdf/Sim_coefficients.png}
+  \includegraphics[width = 0.7\textwidth]{./report_images/figure-pdf/Sim_coefficients.png}
   \caption{Surface of one of the generated bathroom coefficient showing the spatial variation}
   \label{fig:sim_coef}
 \end{figure}
@@ -111,12 +111,7 @@ To simulate observations from this data we used three different distributions. F
 
 Another reason for choosing GWR is due to knowing from Fuss and Koller that there will be a spatial structure in our model that needs to be accounted for [@fuss_role_2016]. We also want a statistical model that can give us interpretable coefficients for our covariates. This is what led us to adopting GWR over algorithmic models that may have better predictive power. We address algorithmic models below as a comparison test.
 
-<<<<<<< HEAD
-When creating a GWR model the two most important hyperparameters are the kernel and bandwidth. We decided to use an exponential kernel due to how sharp some of the changes are between counties along the coastline and around the Denver, Colorado area. We estimated the bandwidth using cross validation and came upon as the best fit. For Random Forest the hyperparameter was the number of trees in the model and for the  
-
-=======
 When creating a GWR model the two most important hyperparameters are the kernel and bandwidth. We decided to use an exponential kernel due to how sharp some of the changes are between counties along the coastline and around the Denver, Colorado area. We estimated the bandwidth using cross validation and came upon `r round(model_bandwidth,2)` as the best fit.
->>>>>>> fa8da19f9bc971ade493eb35428169aefa81626d
 
 To get a surface that covered the entire United States we then used leave one out predictions holding all of the covariates at their median or mean in order to get a surface that showed rent pricing as a function solely of space. We repeated the same process with the fair market rent data in order to have two surfaces that depended only on space that we could compare. We then subtracted these two surfaces to obtain a metric that measured the difference between the fair market and realized values in each county. To compare the accuracy and assess the validity of our GWR model we compared it against algorithmic models on out of comparison tests.
 ```{=tex}
@@ -234,6 +229,7 @@ ggsave("Difference_surface.png", path = "./report_images/figure-pdf")
 \end{figure}
 ```
 We performed a test for multicollinearity and found that the average VIF value was `r round(mean(multicollin_diagnostic$VIF),2)` with a maximum value of `r round(max(multicollin_diagnostic$VIF),2)`. This levels indicate that in this dataset multicollinearity is not an issue that needs to be investigated further. We also ran a Monte Carlo test for nonstationarity of all the coefficients used and found the following results. This test was first introduced by Brunsdon et al. in their original paper on GWR. A small p-value represents rejecting the null hypothesis that the covariate is constant over space. 
+\
 
 ```{r nonstationarity, fig.align='center',warning = FALSE}
 kable(significance_test) %>% 
@@ -294,7 +290,7 @@ We also have to be considerate of our high p values which would require further 
 
 In all, we believe that despite improvements that can be made to our model, we have discovered a novel way to approach the housing crisis. We believe that the points of interest that we found can be further investigated upon to figure out more metrics on how to assess their unfairness with something like a Small Area FMR that can see which neighborhoods are more expensive than others. In the future, we also believe that our research can be a springboard for other models that can take into account more parameters like policy decisions and zoning laws.
 
-
+\newpage
 # Appendix
 
 ```{r hist-trans}
