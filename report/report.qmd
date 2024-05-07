@@ -237,7 +237,7 @@ kable(significance_test) %>%
 ```
 
 \
-The high p-values of the covariates are concerning and require further investigation. However, due to previous literature such as from Fuss and Koller, we do know that there is a spatial pattern that needs to be accounted for. Further research into the nonstationarity of certain variables at the scale of the United States should be investigated to conclusively support this. Once our predictive surface was created we also created surfaces of our predictor coefficients.\
+The high p-values of the covariates are concerning and require further investigation. However, due to previous literature such as from Fuss and Koller, we do know that there is a spatial pattern that needs to be accounted for. Further research into the nonstationarity of certain variables at the scale of the United States should be investigated to conclusively support this. Once our predictive surface was created we also created surfaces of our predictor coefficients as can be seen in \cref{fig:real_coef}.\
 
 ```{r pred_coef, message=FALSE, results = "hide", cache=TRUE, warning=FALSE, output = FALSE}
 library(ggplot2)
